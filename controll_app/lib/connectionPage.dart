@@ -28,8 +28,11 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
 
   @override
   Widget build(BuildContext context) {
-    
-    return DefaultPage(widget.title, Column(
+    return DefaultPage(widget.title, 
+    GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {FocusScope.of(context).requestFocus(new FocusNode());},
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -44,6 +47,10 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
                   decoration: InputDecoration(labelText: 'Port'),
                   keyboardType: TextInputType.number,
                 )),
+                IconButton(
+                  onPressed: (){_addressController.clear(); _portController.clear();},
+                  icon: Icon(Icons.delete),
+            ),
                 ],
               )
             ),
@@ -56,9 +63,13 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
             //ControllerButtons(handleClicks),
             Column(
               children: received.map((e) => Text(e)).toList()
-            )
+            ),
           ]
-        ), // This trailing comma makes auto-formatting nicer for build methods.
+        ),
+        ),
+        widget.connection,
+        null,
+        false
     );
   }
 
@@ -106,7 +117,6 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
   }
 
   void receiveWelcome(Map<String, dynamic> message){
-    print(message['type']);
     widget.connection.sendModes();
   }
 
@@ -121,7 +131,7 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
   }
 
   void receiveMode(Map<String, dynamic> message){
-    print(message);
+    print('Cant interpret mode on connectionPage.');
   }
   
   void connectionError(){

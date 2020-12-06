@@ -7,23 +7,23 @@ import '../connection.dart';
 import '../connectionPage.dart';
 import '../widgets/page.dart';
 
-class DefaultModePage extends StatefulWidget {
+class MenuModePage extends StatefulWidget {
   final Connection connection;
 
-  DefaultModePage({Key key, @required this.connection})
+  MenuModePage({Key key, @required this.connection})
       : super(key: key);
 
   @override
-  _DefaultModePageState createState() => _DefaultModePageState();
+  _MenuModePageState createState() => _MenuModePageState();
 }
 
-class _DefaultModePageState extends State<DefaultModePage> implements ConnectionInterface{
+class _MenuModePageState extends State<MenuModePage> implements ConnectionInterface{
   List<String> received = new List<String>();
   SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
-    return DefaultPage("Controller", ControllerButtons(connection: widget.connection), widget.connection);
+    return DefaultPage("Menu", ControllerButtons(connection: widget.connection), widget.connection);
   }
 
   void receiveMode(Map<String, dynamic> message){
@@ -43,12 +43,12 @@ class _DefaultModePageState extends State<DefaultModePage> implements Connection
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ConnectionPage(connection: widget.connection)));
   }
 
-
   @override
   void initState() {
     widget.connection.setParent(this);
     super.initState();
   }
+
   @override
   void dispose() {
     super.dispose();

@@ -11,7 +11,8 @@ class Connection {
   ConnectionInterface parent;
   String defaultAddress = "192.168.178.82";
   num defaultPort = 8942;
-  Map<String, String> message = {"type": "HELLO", "data": "", "comment": ""};
+  Map<String, dynamic> message = {"type": "HELLO", "data": "", "comment": ""};
+  int connection_number = 0;
 
   Future<bool> connect(String address, num port) async {
     if(address == null || address.length == 0){
@@ -80,7 +81,11 @@ class Connection {
     this.parent = p;
   }
 
-  void sendMessage(Map<String, String> message){
+  void sendMessage(Map<String, dynamic> message){
+    if(!isConnected()){
+      print('not connected!');
+      return;
+    }
     print('sent: '+jsonEncode(message));
     List<int> msg = utf8.encode(jsonEncode(message));
     //print(Uint16List.fromList([msg.length]).buffer.asUint8List());
@@ -143,14 +148,28 @@ class Connection {
     sendMessage(message);
   }
 
+  void sendModeSettings(Map<String, dynamic> settings){
+    message['type'] = "MODESETTINGS";
+    message['data'] = json.encode(settings);
+    sendMessage(message);
+  }
 
-  receiveMessage(dynamic message){
-    Map<String, dynamic> msg = json.decode(message);
+  void sendSettings(Map<String, dynamic> settings){
+    message['type'] = "SETTINGS";
+    message['data'] = json.encode(settings);
+    sendMessage(message);
+  }
+
+
+  receiveMessage(dynamic m){
+    Map<String, dynamic> msg = json.decode(m);
     switch (msg['type']) {
       case "WELCOME":
+        connection_number = int.parse(msg['data']);
         parent.receiveWelcome(msg);
         break;
       case "MODES":
+        connection_number = int.parse(msg['comment']);
         parent.receiveModes(msg);
         break;
       case "MODE":
@@ -164,9 +183,15 @@ class Connection {
 }
 
 class ConnectionInterface{
-  void receiveWelcome(Map<String, dynamic> message){}
-  void receiveModes(Map<String, dynamic> message){}
-  void receiveMode(Map<String, dynamic> message){}
+  void receiveWelcome(Map<String, dynamic> message){
+    return;
+  }
+  void receiveModes(Map<String, dynamic> message){
+    return;
+  }
+  void receiveMode(Map<String, dynamic> message){
+    print(message['type']);
+  }
   void connectionError(){
     print('conn err');
   }

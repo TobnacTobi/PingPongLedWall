@@ -1,3 +1,4 @@
+import 'package:controll_app/modes/textMode.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -5,12 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'connection.dart';
 import 'connectionPage.dart';
+import 'modes/clockMode.dart';
+import 'modes/menuMode.dart';
 import 'widgets/page.dart';
 import 'modes/defaultMode.dart';
 
 class ModesPage extends StatefulWidget {
   final Connection connection;
-  final List<String> modes;
+  List<String> modes;
 
   ModesPage({Key key, @required this.connection, @required this.modes})
       : super(key: key);
@@ -30,7 +33,8 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
       children: widget.modes.map((e) => 
         ListTile(leading: getIconByMode(e), title: Text(e.toUpperCase()), onTap: (){sendMode(e);},)
       ).toList(),
-    ), // This trailing comma makes auto-formatting nicer for build methods.
+    ), 
+    widget.connection,
     );
   }
 
@@ -40,31 +44,67 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
   }
 
   void receiveMode(Map<String, dynamic> message){
-    print(message);
     EasyLoading.dismiss();
+    setMode(message['data']);
+  }
+
+  void setMode(String mode){
     Navigator.of(context).popUntil((route) => route.isFirst);
-    switch (message['data']) {
+    switch (mode) {
       case "clock":
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection)));
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ClockModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
         break;
       case "colors":
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection)));
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
         break;
       case "menu":
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection)));
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MenuModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
+        break;
+      case "text":
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TextModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
         break;
       default:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection)));
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
     }
   }
 
+  void returnToThis(String mode){
+    if(!widget.connection.isConnected()){
+      connectionError();
+      return;
+    }
+    widget.connection.setParent(this);
+    if(mode != null){
+      setMode(mode);
+    }else{
+      widget.connection.sendModes();
+    }
+  }
 
   void receiveWelcome(Map<String, dynamic> message){
-    print(message['type']);
-    
+    return;
   }
+
   void receiveModes(Map<String, dynamic> message){
-    print(message['type']);
+    List<String> modes = List<String>();
+    for (var item in message['data']) {
+      modes.add(item.toString());
+    }
+    modes.remove('mode');
+    setState(() {
+      widget.modes = modes;
+    });
+    print(widget.modes);
   }
 
   void connectionError(){
@@ -80,6 +120,10 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         return Icon(Icons.invert_colors);
       case "menu":
         return Icon(Icons.menu);
+      case "pointmoving":
+        return Icon(Icons.move_to_inbox);
+      case "text":
+        return Icon(Icons.format_size);
       default:
         return Icon(Icons.star);
     }

@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'connectionPage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import 'modes/textMode.dart';
+
 void main() {
   runApp(MyApp());
   configLoading();
 }
+
 class MyApp extends StatelessWidget {
   final connection = Connection();
   @override
@@ -18,8 +21,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      //home: MyHomePage(title: 'LED Wall Control', channel: IOWebSocketChannel.connect('ws://echo.websocket.org'),),
       home: ConnectionPage(connection: connection),
+      //home: TextModePage(connection: connection),
       builder: EasyLoading.init(),
     );
   }

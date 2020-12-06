@@ -25,7 +25,12 @@ class PYGameDisplay(DisplayInterface):
 
     def drawPixel(self, x, y, color):
         r, g, b = color
-        pygame.draw.rect(DISPLAYSURF, (r*(self.brightness/100), g*(self.brightness/100), b*(self.brightness/100)), (x*SIZE+1, y*SIZE+1, SIZE-2, SIZE-2), border_radius=SIZE)
+        try:
+            pygame.draw.rect(DISPLAYSURF, (r*(self.brightness/100), g*(self.brightness/100), b*(self.brightness/100)), (x*SIZE+1, y*SIZE+1, SIZE-2, SIZE-2), border_radius=SIZE)
+        except:
+            print(r)
+            print(g)
+            print(b)
         #pygame.draw.rect(DISPLAYSURF, (color>>16,(color>>8)&0xFF,color&0xFF), (x*SIZE+1, y*SIZE+1, SIZE-2, SIZE-2), border_radius=SIZE)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

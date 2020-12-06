@@ -7,6 +7,8 @@ FORMAT = "utf-8"
 DISCONNECT_MESSAGE = '{type:"DISCONNECT"'
 
 class Connection(threading.Thread):
+    client_sockets = []
+    
     def __init__(self, p):
         super(Connection, self).__init__()
         self.parent = p
@@ -17,14 +19,15 @@ class Connection(threading.Thread):
         print("[STARTING] Server is starting")
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.bind(("0.0.0.0", 8942))
-        server_socket.listen(1)
+        server_socket.listen(2)
         while(True):
-            (self.client_socket, self.addr) = server_socket.accept()
-            thread = threading.Thread(target=self.handleClient, args=(self.client_socket, self.addr))
+            (client_socket, addr) = server_socket.accept()
+            thread = threading.Thread(target=self.handleClient, args=(client_socket, addr))
             thread.start()
 
     def handleClient(self, conn, addr):
         print(f"[NEW CONNECTION] from: {addr} | Total Connections: {threading.activeCount() - 3}")
+        self.client_sockets.append(conn)
         connected = True
         while connected:
             #msg_length = conn.recv(HEADER)
@@ -36,21 +39,21 @@ class Connection(threading.Thread):
             msg = conn.recv(2048).decode(FORMAT)
             if(msg.startswith(DISCONNECT_MESSAGE) or not msg):
                 connected = False
+                self.client_sockets.remove(conn)
             try:
-                self.handleMessage(json.loads(msg))
+                self.handleMessage(json.loads(msg), conn)
                 print(f"[{addr}] {msg}")
             except:
                 pass
             
         conn.close()
 
-    def handleMessage(self, message):
-        print(message)
+    def handleMessage(self, message, conn = None):
         if(message['type'] == 'HELLO'):
             self.message['type'] = 'WELCOME'
-            self.message['data'] = ''
-            self.message['comment'] = ''
-            self.sendMessage(self.message)
+            self.message['data'] = str(self.client_sockets.index(conn)) # number of connection
+            self.message['comment'] = str(self.client_sockets.index(conn) + 1)
+            self.sendMessage(self.message, conn)
         elif(message['type'] == 'DIRECTION'):
             self.parent.current_mode.handleDirection(message['data'])
         elif(message['type'] == 'CONFIRM'):
@@ -59,20 +62,28 @@ class Connection(threading.Thread):
             self.parent.current_mode.handleReturn()
         elif(message['type'] == 'MODE'):
             self.parent.setModeByName(message['data'])
-            self.message['type'] = 'MODE'
-            self.message['data'] = self.parent.current_mode.getName()
-            self.message['comment'] = 'Selected mode'
-            self.sendMessage(self.message)
         elif(message['type'] == 'MODES'):
             self.message['type'] = 'MODES'
             self.message['data'] = self.parent.getModes()
-            self.message['comment'] = 'These are all the modes that are defined by the server'
+            self.message['comment'] = str(self.client_sockets.index(conn) + 1) # 'These are all the modes that are defined by the server'
             self.sendMessage(self.message)
+        elif(message['type'] == 'SETTINGS'):
+            settings = json.loads(message['data'])
+            self.parent.current_mode.handleSetting(settings)
+            self.parent.display.setBrightness(settings['brightness'])
+        elif(message['type'] == 'MODESETTINGS'):
+            settings = json.loads(message['data'])
+            self.parent.current_mode.handleModeSetting(settings)
     
 
-    def sendMessage(self, message):
-        if(self.client_socket is None or self.addr is None):
-            return False
-        self.client_socket.send(json.dumps(message).encode(FORMAT))
+    def sendMessage(self, message, conn = None):
+        if(conn is None):
+            for s in self.client_sockets:
+                s.send(json.dumps(message).encode(FORMAT))
+        else:
+            conn.send(json.dumps(message).encode(FORMAT))
+        #if(self.client_socket is None or self.addr is None):
+        #    return False
+        #self.client_socket.send(json.dumps(message).encode(FORMAT))
 
     

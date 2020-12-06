@@ -1,5 +1,7 @@
 
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:path_drawing/path_drawing.dart';
 
@@ -9,7 +11,12 @@ class ControllerButtons extends StatelessWidget{
 
   // takes String of [up, down, left, right, center]
   Connection connection;
-  ControllerButtons({this.connection});
+  Function up;
+  Function down;
+  Function left;
+  Function right;
+  Function confirm;
+  ControllerButtons({this.connection, this.up, this.down, this.left, this.right, this.confirm});
 
   @override
   Widget build(BuildContext context){
@@ -61,19 +68,39 @@ class ControllerButtons extends StatelessWidget{
     void _handleClick(String button){
     switch (button) {
       case 'up':
-        connection.sendUp();
+        if(up == null){
+          connection.sendUp();
+        }else{
+          up();
+        }
         break;
       case 'down':
-        connection.sendDown();
+      if(down == null){
+          connection.sendDown();
+        }else{
+          down();
+        }
         break;
       case 'left':
-        connection.sendLeft();
+      if(left == null){
+          connection.sendLeft();
+        }else{
+          left();
+        }
         break;
       case 'right':
-        connection.sendRight();
+      if(right == null){
+          connection.sendRight();
+        }else{
+          right();
+        }
         break;
       case 'center':
-        connection.sendConfirm();
+      if(confirm == null){
+          connection.sendConfirm();
+        }else{
+          confirm();
+        }
         break;
     }
     print(button);
@@ -86,13 +113,42 @@ class ControllerButtons extends StatelessWidget{
         clipper.setImageScale(1000, 1000);
         return ClipPath(
           clipper: clipper,
-          child: GestureDetector(
-            onTap: onClick,
-            child: Image.asset('assets/whole_button.png'),
-          ),
+          child: _LongPressButton(onClick, Image.asset('assets/whole_button.png')),
         );
     }
+}
 
+class _LongPressButton extends StatelessWidget{
+  final Function _onClick;
+  bool isPressed = false;
+  Widget child;
+  _LongPressButton(this._onClick, this.child);
+
+  Widget build(BuildContext context){
+    return GestureDetector(
+      onLongPressStart: (details){
+        _longPressStart();
+      },
+      onLongPressUp: _longPressStop,
+      onTap: _onClick,
+      child: child,
+    );
+  }
+
+  _longPressStart(){
+    isPressed = true;
+    new Timer.periodic(Duration(milliseconds: 100), (Timer t) {
+      if(isPressed){
+        _onClick();
+      }else{
+        t.cancel();
+      }
+    });
+  }
+
+  _longPressStop(){
+    isPressed = false;
+  }
 }
 
 class _Clipper extends CustomClipper<Path> {

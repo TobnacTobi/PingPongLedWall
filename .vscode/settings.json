@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "C:\\Program Files (x86)\\Python\\Python3.7\\python.exe",
+    "python.linting.pylintArgs": [
+        "--extension-pkg-whitelist=lxml",  // The extension is "lxml" not "1xml"
+        "--extension-pkg-whitelist=pygame" // comma separated
+    ]
+}

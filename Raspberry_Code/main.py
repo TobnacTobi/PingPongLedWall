@@ -6,6 +6,8 @@ from modes.mode import Mode
 from modes.colors import Colors
 from modes.menu import Menu
 from modes.clock import Clock
+from modes.text import Text
+from modes.pointmoving import PointMoving
 from displays.display import Display
 from connection import Connection
 
@@ -14,7 +16,10 @@ class Main:
         self.current_mode = None
         self.setConnection()
         self.display = Display()
-        self.setMode(Colors(self, self.display))
+        # self.setMode(Colors(self, self.display))
+        # self.setMode(Text(self, self.display))
+        # self.setMode(Clock(self, self.display))
+        self.setMode(Menu(self, self.display))
 
     def run(self):
         while(True):
@@ -33,6 +38,11 @@ class Main:
             raise Exception('Given mode Class does not inherit Mode or Thread. sad :(')
         self.current_mode = mode
         self.current_mode.start()
+        message = {}
+        message['type'] = 'MODE'
+        message['data'] = self.current_mode.getName()
+        message['comment'] = 'Selected mode'
+        self.connection.sendMessage(message)
     
     def setModeByName(self, mode: str):
         modeInstance = None
@@ -42,6 +52,10 @@ class Main:
             modeInstance = Colors(self, self.display)
         elif(mode == 'menu'):
             modeInstance = Menu(self, self.display)
+        elif(mode == 'text'):
+            modeInstance = Text(self, self.display)
+        elif(mode == 'pointmoving'):
+            modeInstance = PointMoving(self, self.display)
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)
