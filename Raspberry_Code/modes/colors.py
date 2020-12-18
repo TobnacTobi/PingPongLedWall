@@ -47,8 +47,6 @@ class Colors(Mode):
                     )
             start_color_hue_angle+=speed
             angle = (angle + speed) % (math.pi*2)
-            if(start_color_hue_angle>1):
-                start_color_hue_angle = 0
             lasttime = self.wait(lasttime)
             timepast += 1/FrameRate
     

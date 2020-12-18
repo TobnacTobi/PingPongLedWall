@@ -11,6 +11,7 @@ class Connection {
   ConnectionInterface parent;
   String defaultAddress = "192.168.178.82";
   num defaultPort = 8942;
+  String separator = "|"; // separates messages from each other
   Map<String, dynamic> message = {"type": "HELLO", "data": "", "comment": ""};
   int connection_number = 0;
 
@@ -86,13 +87,13 @@ class Connection {
       print('not connected!');
       return;
     }
-    print('sent: '+jsonEncode(message));
-    List<int> msg = utf8.encode(jsonEncode(message));
+    List<int> msg = utf8.encode(jsonEncode(message) + separator);
     //print(Uint16List.fromList([msg.length]).buffer.asUint8List());
     //var bdata = new ByteData(8);
     //bdata.setInt64(0, msg.length);
     //print(bdata.buffer.asUint8List());
     //_socket.add(bdata.buffer.asUint8List());
+    //_socket.flush().then((value) => (){_socket.add(msg);});
     _socket.add(msg);
   }
 

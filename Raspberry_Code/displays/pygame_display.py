@@ -21,6 +21,7 @@ class PYGameDisplay(DisplayInterface):
         pygame.display.set_caption('PYGame Display')
         DISPLAYSURF.fill((  0,   0,   0))
         pygame.display.update()
+        # DISPLAYSURF.fill((255,255,255)) # Background color
         self.display_thread = threading._start_new_thread(self.run_display, ())
 
     def drawPixel(self, x, y, color):
@@ -31,11 +32,9 @@ class PYGameDisplay(DisplayInterface):
             print(r)
             print(g)
             print(b)
-        #pygame.draw.rect(DISPLAYSURF, (color>>16,(color>>8)&0xFF,color&0xFF), (x*SIZE+1, y*SIZE+1, SIZE-2, SIZE-2), border_radius=SIZE)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-        #pygame.display.update()
     
     def run_display(self): # call this in main process permanently
         global EXIT

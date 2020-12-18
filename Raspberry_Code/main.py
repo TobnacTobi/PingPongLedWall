@@ -8,8 +8,14 @@ from modes.menu import Menu
 from modes.clock import Clock
 from modes.text import Text
 from modes.pointmoving import PointMoving
+from modes.dvd import DVD
+from modes.draw import Draw
+from modes.image import Image
 from displays.display import Display
 from connection import Connection
+
+FRAMERATE = 60
+UPDATEINTERVAL = 1/FRAMERATE
 
 class Main:
     def __init__(self):
@@ -19,13 +25,14 @@ class Main:
         # self.setMode(Colors(self, self.display))
         # self.setMode(Text(self, self.display))
         # self.setMode(Clock(self, self.display))
-        self.setMode(Menu(self, self.display))
+        # self.setMode(Menu(self, self.display))
+        self.setMode(DVD(self, self.display))
+        # self.setMode(Image(self, self.display))
 
     def run(self):
         while(True):
             self.display.display.run_display()
-            time.sleep(0.016)
-            # only necessary for the pygame display
+            time.sleep(UPDATEINTERVAL)
 
     def setConnection(self):
         self.connection = Connection(self)
@@ -56,6 +63,12 @@ class Main:
             modeInstance = Text(self, self.display)
         elif(mode == 'pointmoving'):
             modeInstance = PointMoving(self, self.display)
+        elif(mode == 'dvd'):
+            modeInstance = DVD(self, self.display)
+        elif(mode == 'draw'):
+            modeInstance = Draw(self, self.display)
+        elif(mode == 'image'):
+            modeInstance = Image(self, self.display)
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)

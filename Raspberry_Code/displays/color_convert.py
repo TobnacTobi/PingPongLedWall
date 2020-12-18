@@ -34,3 +34,12 @@ def HSVtoRGB(h, s, v):
     r, g, b = rgbTuple
     return (r*255, g*255, b*255)
     #return RGBToOneValue(r*255, g*255, b*255)
+
+def MixColors(color1, color2, mixture): # color tuples need to have same amount of elements; mixture in [0, 1.0]
+    # if(not len(color1) == len(color2)):
+    #     raise Exception('colors dont have same components')
+    ret = ()
+    for i in range(len(color1)):
+        a = math.floor((mixture)*(color1[i]) + (color2[i])*(1-mixture))
+        ret = ret + (a,)
+    return ret

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'connectionPage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import 'modes/drawMode.dart';
 import 'modes/textMode.dart';
 
 void main() {
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: ConnectionPage(connection: connection),
-      //home: TextModePage(connection: connection),
+      //home: DrawModePage(connection: connection),
       builder: EasyLoading.init(),
     );
   }

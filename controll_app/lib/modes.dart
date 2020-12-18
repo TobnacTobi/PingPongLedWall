@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'connection.dart';
 import 'connectionPage.dart';
 import 'modes/clockMode.dart';
+import 'modes/drawMode.dart';
+import 'modes/imageMode.dart';
 import 'modes/menuMode.dart';
 import 'widgets/page.dart';
 import 'modes/defaultMode.dart';
@@ -71,6 +73,16 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
           returnToThis(value);
         });
         break;
+      case "draw":
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DrawModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
+        break;
+      case "image":
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ImageModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
+        break;
       default:
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection))).then((value){
           returnToThis(value);
@@ -124,6 +136,10 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         return Icon(Icons.move_to_inbox);
       case "text":
         return Icon(Icons.format_size);
+      case "draw":
+        return Icon(Icons.create);
+      case "image":
+        return Icon(Icons.image);
       default:
         return Icon(Icons.star);
     }

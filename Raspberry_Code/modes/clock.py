@@ -38,7 +38,6 @@ class Clock(Mode):
             self.milliseconds = timestr[9:14]
             self.separatoropacity = (math.sin(time.time()*math.pi)+1)/2
             self.secondsFraction = time.time() % (self.display.width * self.display.height)
-
             self.getTextMatrix()
             self.showClock()
     
@@ -97,40 +96,20 @@ class Clock(Mode):
         tr1, tg1, tb1, ta1 = self.textcolor1
         if(separator):
             ta0=(ta0*self.separatoropacity)%256
-            ta1=(ta1*self.separatoropacity)%256
         if(self.textstyle == 'solid'):
             if(ta0 == 255):
                 return (tr0, tg0, tb0)
-            br, bg, bb = self.getBackgroundColor(x, y)
-            r = math.floor(ta0*(tr0)/255 + (br)*(255-ta0)/255)
-            g = math.floor(ta0*(tg0)/255 + (bg)*(255-ta0)/255)
-            b = math.floor(ta0*(tb0)/255 + (bb)*(255-ta0)/255)
+            return color_convert.MixColors(self.textcolor0[:-1], self.getBackgroundColor(x, y), ta0/255)
         if(self.textstyle == 'fadeHorizontal'):
             length = self.display.width
             p = ((x + self.xpos)%length)/length
-            r = math.floor((p)*(tr0) + (tr1)*(1-p))
-            g = math.floor((p)*(tg0) + (tg1)*(1-p))
-            b = math.floor((p)*(tb0) + (tb1)*(1-p))
-            a = math.floor((p)*(ta0) + ta1*(1-p))
-
-            br, bg, bb = self.getBackgroundColor(x, y)
-
-            r = math.floor(a*(r)/255 + (br)*(255-a)/255)
-            g = math.floor(a*(g)/255 + (bg)*(255-a)/255)
-            b = math.floor(a*(b)/255 + (bb)*(255-a)/255)
+            frontcolor = color_convert.MixColors(self.textcolor0, self.textcolor1, p)
+            return color_convert.MixColors(frontcolor[:-1], self.getBackgroundColor(x, y), frontcolor[-1])
         if(self.textstyle == 'fadeVertical'):
             length = self.display.height
             p = (y%length)/length
-            r = math.floor((p)*(tr0) + (tr1)*(1-p))
-            g = math.floor((p)*(tg0) + (tg1)*(1-p))
-            b = math.floor((p)*(tb0) + (tb1)*(1-p))
-            a = math.floor((p)*(ta0) + ta1*(1-p))
-
-            br, bg, bb = self.getBackgroundColor(x, y)
-
-            r = math.floor(a*(r)/255 + (br)*(255-a)/255)
-            g = math.floor(a*(g)/255 + (bg)*(255-a)/255)
-            b = math.floor(a*(b)/255 + (bb)*(255-a)/255)
+            frontcolor = color_convert.MixColors(self.textcolor0, self.textcolor1, p)
+            return color_convert.MixColors(frontcolor[:-1], self.getBackgroundColor(x, y), frontcolor[-1])
         if(self.textstyle == 'rainbow'):
             xpos = time.time()*0.05%1
             size = 30/self.size
@@ -152,19 +131,15 @@ class Clock(Mode):
         if(self.backgroundstyle == 'fadeHorizontal'):
             length = self.display.width
             p = (x%length)/length
-            r = math.floor((p)*(br0) + (br1)*(1-p))
-            g = math.floor((p)*(bg0) + (bg1)*(1-p))
-            b = math.floor((p)*(bb0) + (bb1)*(1-p))
+            r, g, b = MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'fadeVertical'):
             length = self.display.height
             p = (y%length)/length
-            r = math.floor((p)*(br0) + (br1)*(1-p))
-            g = math.floor((p)*(bg0) + (bg1)*(1-p))
-            b = math.floor((p)*(bb0) + (bb1)*(1-p))
+            r, g, b = MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'rainbow'):
             xpos = time.time()*0.01%1
             size = 5/self.size
-            (r, g, b) = color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 1)
+            r, g, b = color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 1)
 
         # count seconds with pixels:
         if(self.countSeconds):

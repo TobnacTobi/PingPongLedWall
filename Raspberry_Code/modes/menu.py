@@ -125,86 +125,52 @@ class Menu(Mode):
         a = rgba[3]
         if(a == 255):
             return (r, g, b)
-        br, bg, bb = self.getBackgroundColor(x, y)
-        r = math.floor(a*(r)/255 + (br)*(255-a)/255)
-        g = math.floor(a*(g)/255 + (bg)*(255-a)/255)
-        b = math.floor(a*(b)/255 + (bb)*(255-a)/255)
-        return (r, g, b)
+        return color_convert.MixColors((r, g, b), self.getBackgroundColor(x, y), a/255)
 
-    def getArrowColor(self, x, y, over_text = False, opacity = 1.0):
-        tr0, tg0, tb0, ta0 = self.arrowcolor0
-        tr1, tg1, tb1, ta1 = self.arrowcolor1
-        if(not opacity == 1.0):
-            ta0*=opacity
-            ta1*=opacity
+    def getArrowColor(self, x, y, over_text = False):
         br = bg = bb = 0
         if(over_text):
             br, bg, bb = self.getIconColor(self.modeIconArray[y-self.paddingY][(x + self.currentX) % len(self.modeIconArray[0])], x, y)
         else:
             br, bg, bb = self.getBackgroundColor(x, y)
         if(self.arrowstyle == 'solid'):
-            if(ta0 == 255):
-                return (tr0, tg0, tb0)
-            r = math.floor(ta0*(tr0)/255 + (br)*(255-ta0)/255)
-            g = math.floor(ta0*(tg0)/255 + (bg)*(255-ta0)/255)
-            b = math.floor(ta0*(tb0)/255 + (bb)*(255-ta0)/255)
-            return (r, g, b)
+            if(self.arrowcolor0[-1] == 255):
+                return self.arrowcolor0
+            return color_convert.MixColors(self.arrowcolor0[:-1], (br, bg, bb), self.arrowcolor0[-1]/255)
         if(self.arrowstyle == 'fadeHorizontal'):
             length = self.display.width
             p = (x %length)/length
-            r = math.floor((p)*(tr0) + (tr1)*(1-p))
-            g = math.floor((p)*(tg0) + (tg1)*(1-p))
-            b = math.floor((p)*(tb0) + (tb1)*(1-p))
-            a = math.floor((p)*(ta0) + ta1*(1-p))
-
-            r = math.floor(a*(r)/255 + (br)*(255-a)/255)
-            g = math.floor(a*(g)/255 + (bg)*(255-a)/255)
-            b = math.floor(a*(b)/255 + (bb)*(255-a)/255)
-
-            return (r, g, b)
+            frontcolor = color_convert.MixColors(self.arrowcolor0, self.arrowcolor1, p)
+            return color_convert.MixColors(frontcolor[:-1], (br, bg, bb), frontcolor[-1]/255)
         if(self.arrowstyle == 'fadeVertical'):
             length = self.display.height
             p = (y%length)/length
-            r = math.floor((p)*(tr0) + (tr1)*(1-p))
-            g = math.floor((p)*(tg0) + (tg1)*(1-p))
-            b = math.floor((p)*(tb0) + (tb1)*(1-p))
-            a = math.floor((p)*(ta0) + ta1*(1-p))
-
-            r = math.floor(a*(r)/255 + (br)*(255-a)/255)
-            g = math.floor(a*(g)/255 + (bg)*(255-a)/255)
-            b = math.floor(a*(b)/255 + (bb)*(255-a)/255)
-
-            return (r, g, b)
+            frontcolor = color_convert.MixColors(self.arrowcolor0, self.arrowcolor1, p)
+            return color_convert.MixColors(frontcolor[:-1], (br, bg, bb), frontcolor[-1]/255)
         if(self.arrowstyle == 'rainbow'):
             xpos = time.time()*0.05%1
             size = 30/self.size
             return color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 1)
     
     def getBackgroundColor(self, x, y):
-        br0, bg0, bb0, ba0 = self.backgroundcolor0
-        br1, bg1, bb1, ba1 = self.backgroundcolor1
         if(self.backgroundstyle == 'solid'):
+            br0, bg0, bb0, ba0 = self.backgroundcolor0
+            br1, bg1, bb1, ba1 = self.backgroundcolor1
             if(ba0 == 255):
                 return (br0, bg0, bb0)
             return (br0 * (ba0 / 255), bg0* (ba0 / 255), bb0* (ba0 / 255))
         if(self.backgroundstyle == 'fadeHorizontal'):
             length = self.display.width
             p = (x%length)/length
-            r = math.floor((p)*(br0) + (br1)*(1-p))
-            g = math.floor((p)*(bg0) + (bg1)*(1-p))
-            b = math.floor((p)*(bb0) + (bb1)*(1-p))
-            return (r, g, b)
+            return MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'fadeVertical'):
             length = self.display.height
             p = (y%length)/length
-            r = math.floor((p)*(br0) + (br1)*(1-p))
-            g = math.floor((p)*(bg0) + (bg1)*(1-p))
-            b = math.floor((p)*(bb0) + (bb1)*(1-p))
-            return (r, g, b)
+            return MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'rainbow'):
             xpos = time.time()*0.01%1
             size = 5/self.size
-            return color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 1)
+            return color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 0.5)
 
     def handleModeSetting(self, t):
         tc = json.loads(t['arrowcolor'])

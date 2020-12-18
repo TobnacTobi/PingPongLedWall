@@ -104,26 +104,20 @@ class Text(Mode):
             return color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 1)
 
     def getBackgroundColor(self, x, y):
-        br0, bg0, bb0, ba0 = self.backgroundcolor0
-        br1, bg1, bb1, ba1 = self.backgroundcolor1
+        
         if(self.backgroundstyle == 'solid'):
+            br0, bg0, bb0, ba0 = self.backgroundcolor0
             if(ba0 == 255):
                 return (br0, bg0, bb0)
             return (br0 * (ba0 / 255), bg0* (ba0 / 255), bb0* (ba0 / 255))
         if(self.backgroundstyle == 'fadeHorizontal'):
             length = self.display.width
             p = (x%length)/length
-            r = math.floor((p)*(br0) + (br1)*(1-p))
-            g = math.floor((p)*(bg0) + (bg1)*(1-p))
-            b = math.floor((p)*(bb0) + (bb1)*(1-p))
-            return (r, g, b)
+            return color_convert.MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'fadeVertical'):
             length = self.display.height
             p = (y%length)/length
-            r = math.floor((p)*(br0) + (br1)*(1-p))
-            g = math.floor((p)*(bg0) + (bg1)*(1-p))
-            b = math.floor((p)*(bb0) + (bb1)*(1-p))
-            return (r, g, b)
+            return color_convert.MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'rainbow'):
             xpos = self.xpos*0.005%1
             size = 10/self.size

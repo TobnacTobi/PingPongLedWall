@@ -5,6 +5,7 @@ import socket
 HEADER = 64
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = '{type:"DISCONNECT"'
+SEPARATOR = "|"
 
 class Connection(threading.Thread):
     client_sockets = []
@@ -36,16 +37,21 @@ class Connection(threading.Thread):
             #    msg_length = int.from_bytes(msg_length, byteorder='little', signed=False)
             #    msg_length = int(msg_length)
             #    print(msg_length)
-            msg = conn.recv(2048).decode(FORMAT)
-            if(msg.startswith(DISCONNECT_MESSAGE) or not msg):
-                connected = False
-                self.client_sockets.remove(conn)
-            try:
-                self.handleMessage(json.loads(msg), conn)
-                print(f"[{addr}] {msg}")
-            except:
-                pass
-            
+            msg = ""
+            while True:
+                msg += conn.recv(1024).decode(FORMAT)
+                pieces = msg.split(SEPARATOR)
+                msg = pieces.pop()
+                for piece in pieces:
+                    if(piece.startswith(DISCONNECT_MESSAGE) or not piece):
+                        connected = False
+                        self.client_sockets.remove(conn)
+                    try:
+                        self.handleMessage(json.loads(piece), conn)
+                        print(f"[{addr}] {piece}")
+                    except:
+                       print('Message couldnt be handled')
+                       pass
         conn.close()
 
     def handleMessage(self, message, conn = None):
