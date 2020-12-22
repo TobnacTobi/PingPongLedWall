@@ -4,6 +4,7 @@ import 'connectionPage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'modes/drawMode.dart';
+import 'modes/soundMode.dart';
 import 'modes/textMode.dart';
 
 void main() {
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: ConnectionPage(connection: connection),
-      //home: DrawModePage(connection: connection),
+      //home: SoundModePage(connection: connection),
       builder: EasyLoading.init(),
     );
   }

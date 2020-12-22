@@ -56,10 +56,10 @@ class Draw(Mode):
                     self.points[x][y] = (r, g, b)
             self.changeRequest = True
 
-    def handleDirection(self, direction):
+    def handleDirection(self, direction, connection = 0):
         self.changeRequest = True
     
-    def handleConfirm(self):
+    def handleConfirm(self, connection = 0):
         self.changeRequest = True
 
     def handleReturn(self):

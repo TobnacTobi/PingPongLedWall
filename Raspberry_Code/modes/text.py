@@ -133,10 +133,10 @@ class Text(Mode):
             return time.time()
         return currtime
     
-    def handleDirection(self, direction):
+    def handleDirection(self, direction, connection = 0):
         self.changeRequest = True
     
-    def handleConfirm(self):
+    def handleConfirm(self, connection = 0):
         self.changeRequest = True
 
     def handleReturn(self):

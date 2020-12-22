@@ -18,10 +18,10 @@ class Mode(threading.Thread):
     def stopThread(self):
         self.stop = True
     
-    def handleDirection(self, direction):
+    def handleDirection(self, direction, connection = 0): # connection = index of connection (0, 1, 2, ..)
         pass
     
-    def handleConfirm(self):
+    def handleConfirm(self, connection = 0): # connection = index of connection (0, 1, 2, ..)
         pass
 
     def handleReturn(self):

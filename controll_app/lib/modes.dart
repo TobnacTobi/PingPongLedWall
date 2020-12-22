@@ -10,6 +10,7 @@ import 'modes/clockMode.dart';
 import 'modes/drawMode.dart';
 import 'modes/imageMode.dart';
 import 'modes/menuMode.dart';
+import 'modes/soundMode.dart';
 import 'widgets/page.dart';
 import 'modes/defaultMode.dart';
 
@@ -83,6 +84,18 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
           returnToThis(value);
         });
         break;
+      case 'sound':
+      case "sound0":
+      case "sound1":
+      case "sound2":
+      case "sound3":
+      case "sound4":
+      case "sound5":
+      case "sound6":
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SoundModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
+        break;
       default:
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DefaultModePage(connection: widget.connection))).then((value){
           returnToThis(value);
@@ -140,6 +153,20 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         return Icon(Icons.create);
       case "image":
         return Icon(Icons.image);
+      case "fourrow":
+        return Icon(Icons.casino);
+      case "snake":
+        return Icon(Icons.timeline);
+      case "tetris":
+        return Icon(Icons.games);
+      case "sound0":
+      case "sound1":
+      case "sound2":
+      case "sound3":
+      case "sound4":
+      case "sound5":
+      case "sound6":
+        return Icon(Icons.equalizer);
       default:
         return Icon(Icons.star);
     }

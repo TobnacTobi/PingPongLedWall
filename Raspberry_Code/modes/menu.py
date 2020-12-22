@@ -186,7 +186,7 @@ class Menu(Mode):
             self.backgroundcolor1 = self.getColorsFromMessage(bc['color1'])
         self.changeRequest = True
 
-    def handleDirection(self, direction):
+    def handleDirection(self, direction, connection = 0):
         if(direction == "RIGHT"):
             self.destinationIndex += 1
             self.destinationX += (self.paddingX + len(self.arrows[0][0]) + self.iconsize)
@@ -196,7 +196,7 @@ class Menu(Mode):
         
         self.changeRequest = True
     
-    def handleConfirm(self):
+    def handleConfirm(self, connection = 0):
         self.parent.setModeByName(self.modes[self.destinationIndex % len(self.modes)])
     
     def getName(self):

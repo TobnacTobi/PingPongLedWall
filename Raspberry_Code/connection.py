@@ -1,6 +1,7 @@
 import time, threading
 import json
 import socket
+import sys
 
 HEADER = 64
 FORMAT = "utf-8"
@@ -49,9 +50,10 @@ class Connection(threading.Thread):
                     try:
                         self.handleMessage(json.loads(piece), conn)
                         print(f"[{addr}] {piece}")
-                    except:
-                       print('Message couldnt be handled')
-                       pass
+                    except Exception as e: 
+                        print(e)
+                        print('Message couldnt be handled')
+
         conn.close()
 
     def handleMessage(self, message, conn = None):
@@ -61,9 +63,9 @@ class Connection(threading.Thread):
             self.message['comment'] = str(self.client_sockets.index(conn) + 1)
             self.sendMessage(self.message, conn)
         elif(message['type'] == 'DIRECTION'):
-            self.parent.current_mode.handleDirection(message['data'])
+            self.parent.current_mode.handleDirection(message['data'], self.client_sockets.index(conn))
         elif(message['type'] == 'CONFIRM'):
-            self.parent.current_mode.handleConfirm()
+            self.parent.current_mode.handleConfirm(self.client_sockets.index(conn))
         elif(message['type'] == 'RETURN'):
             self.parent.current_mode.handleReturn()
         elif(message['type'] == 'MODE'):
@@ -72,7 +74,7 @@ class Connection(threading.Thread):
             self.message['type'] = 'MODES'
             self.message['data'] = self.parent.getModes()
             self.message['comment'] = str(self.client_sockets.index(conn) + 1) # 'These are all the modes that are defined by the server'
-            self.sendMessage(self.message)
+            self.sendMessage(self.message, conn)
         elif(message['type'] == 'SETTINGS'):
             settings = json.loads(message['data'])
             self.parent.current_mode.handleSetting(settings)

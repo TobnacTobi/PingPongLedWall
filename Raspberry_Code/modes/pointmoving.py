@@ -46,7 +46,7 @@ class PointMoving(Mode):
             return time.time()
         return currtime
 
-    def handleDirection(self, direction):
+    def handleDirection(self, direction, connection = 0):
         self.xold = self.x
         self.yold = self.y
         if(direction == 'LEFT'):
@@ -67,7 +67,7 @@ class PointMoving(Mode):
             self.y = self.display.height - 1
         self.changeRequest = True
     
-    def handleConfirm(self):
+    def handleConfirm(self, connection = 0):
         self.changeRequest = True
 
     def handleReturn(self):

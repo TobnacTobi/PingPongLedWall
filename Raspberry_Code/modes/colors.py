@@ -221,10 +221,10 @@ class Colors(Mode):
         self.changeAnimationRequest = False
         return v
 
-    def handleDirection(self, direction):
+    def handleDirection(self, direction, connection = 0):
         self.changeAnimationRequest = True
     
-    def handleConfirm(self):
+    def handleConfirm(self, connection = 0):
         self.changeAnimationRequest = True
 
     def handleReturn(self):

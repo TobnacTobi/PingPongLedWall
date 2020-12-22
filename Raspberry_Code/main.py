@@ -11,6 +11,11 @@ from modes.pointmoving import PointMoving
 from modes.dvd import DVD
 from modes.draw import Draw
 from modes.image import Image
+from modes.fourrow import FourRow
+from modes.snake import Snake
+from modes.tetris import Tetris
+from modes.life import GameOfLife
+from modes.sound1 import Sound1
 from displays.display import Display
 from connection import Connection
 
@@ -26,8 +31,13 @@ class Main:
         # self.setMode(Text(self, self.display))
         # self.setMode(Clock(self, self.display))
         # self.setMode(Menu(self, self.display))
-        self.setMode(DVD(self, self.display))
+        # self.setMode(DVD(self, self.display))
         # self.setMode(Image(self, self.display))
+        # self.setMode(FourRow(self, self.display))
+        # self.setMode(Snake(self, self.display))
+        # self.setMode(Tetris(self, self.display))
+        # self.setMode(GameOfLife(self, self.display))
+        self.setMode(Sound1(self, self.display))
 
     def run(self):
         while(True):
@@ -69,6 +79,16 @@ class Main:
             modeInstance = Draw(self, self.display)
         elif(mode == 'image'):
             modeInstance = Image(self, self.display)
+        elif(mode == 'fourrow'):
+            modeInstance = FourRow(self, self.display)
+        elif(mode == 'snake'):
+            modeInstance = Snake(self, self.display)
+        elif(mode == 'tetris'):
+            modeInstance = Tetris(self, self.display)
+        elif(mode == 'life'):
+            modeInstance = GameOfLife(self, self.display)
+        elif(mode == 'sound1'):
+            modeInstance = Sound1(self, self.display)
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)
