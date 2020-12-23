@@ -10,12 +10,16 @@ from modes.text import Text
 from modes.pointmoving import PointMoving
 from modes.dvd import DVD
 from modes.draw import Draw
+from modes.video import Video
 from modes.image import Image
 from modes.fourrow import FourRow
 from modes.snake import Snake
 from modes.tetris import Tetris
 from modes.life import GameOfLife
-from modes.sound1 import Sound1
+from modes.sound import Sound
+from modes.fire import Fire
+from modes.breakout import Breakout
+from modes.flappybird import FlappyBird
 from displays.display import Display
 from connection import Connection
 
@@ -27,7 +31,7 @@ class Main:
         self.current_mode = None
         self.setConnection()
         self.display = Display()
-        # self.setMode(Colors(self, self.display))
+        self.setMode(Colors(self, self.display))
         # self.setMode(Text(self, self.display))
         # self.setMode(Clock(self, self.display))
         # self.setMode(Menu(self, self.display))
@@ -37,7 +41,9 @@ class Main:
         # self.setMode(Snake(self, self.display))
         # self.setMode(Tetris(self, self.display))
         # self.setMode(GameOfLife(self, self.display))
-        self.setMode(Sound1(self, self.display))
+        # self.setMode(Sound(self, self.display))
+        # self.setMode(Breakout(self, self.display))
+        # self.setMode(Fire(self, self.display))
 
     def run(self):
         while(True):
@@ -79,6 +85,8 @@ class Main:
             modeInstance = Draw(self, self.display)
         elif(mode == 'image'):
             modeInstance = Image(self, self.display)
+        elif(mode == 'video'):
+            modeInstance = Video(self, self.display)
         elif(mode == 'fourrow'):
             modeInstance = FourRow(self, self.display)
         elif(mode == 'snake'):
@@ -87,8 +95,14 @@ class Main:
             modeInstance = Tetris(self, self.display)
         elif(mode == 'life'):
             modeInstance = GameOfLife(self, self.display)
-        elif(mode == 'sound1'):
-            modeInstance = Sound1(self, self.display)
+        elif(mode == 'sound'):
+            modeInstance = Sound(self, self.display)
+        elif(mode == 'fire'):
+            modeInstance = Fire(self, self.display)
+        elif(mode == 'breakout'):
+            modeInstance = Breakout(self, self.display)
+        elif(mode == 'flappybird'):
+            modeInstance = FlappyBird(self, self.display)
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)

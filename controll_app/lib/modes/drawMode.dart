@@ -1,19 +1,22 @@
 import 'dart:convert';
-
+import 'package:zoom_widget/zoom_widget.dart';
 import 'package:controll_app/widgets/buttons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../connection.dart';
 import '../connectionPage.dart';
 import '../widgets/page.dart';
-
+int currentpans = 0;
 class DrawModePage extends StatefulWidget {
   final Connection connection;
   final int sizex = 20;
   final int sizey = 15;
+
+  
 
   DrawModePage({
     Key key,
@@ -92,7 +95,7 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
                     //color: Colors.red
                   ), )
               ),
-            );
+              );
           }),
 
           Row(children: [
@@ -121,7 +124,8 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
           ], ),
           Row(children: [
             buildColorButton(Colors.purple), buildColorButton(Colors.pink), buildColorButton(Colors.lime), buildColorButton(Colors.brown), buildColorButton(Colors.cyan), buildColorButton(Colors.teal), buildColorButton(Colors.deepOrange),
-          ], )
+          ], ),
+          
         ], ), widget.connection);
   }
 

@@ -6,11 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'connection.dart';
 import 'connectionPage.dart';
+import 'modes/breakoutMode.dart';
 import 'modes/clockMode.dart';
 import 'modes/drawMode.dart';
 import 'modes/imageMode.dart';
 import 'modes/menuMode.dart';
 import 'modes/soundMode.dart';
+import 'modes/videoMode.dart';
 import 'widgets/page.dart';
 import 'modes/defaultMode.dart';
 
@@ -84,15 +86,18 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
           returnToThis(value);
         });
         break;
+      case "video":
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => VideoModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
+        break;
       case 'sound':
-      case "sound0":
-      case "sound1":
-      case "sound2":
-      case "sound3":
-      case "sound4":
-      case "sound5":
-      case "sound6":
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SoundModePage(connection: widget.connection))).then((value){
+          returnToThis(value);
+        });
+        break;
+      case 'breakout':
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BreakoutModePage(connection: widget.connection))).then((value){
           returnToThis(value);
         });
         break;
@@ -144,7 +149,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
       case "colors":
         return Icon(Icons.invert_colors);
       case "menu":
-        return Icon(Icons.menu);
+        return Icon(Icons.menu_open);
       case "pointmoving":
         return Icon(Icons.move_to_inbox);
       case "text":
@@ -159,14 +164,16 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         return Icon(Icons.timeline);
       case "tetris":
         return Icon(Icons.games);
-      case "sound0":
-      case "sound1":
-      case "sound2":
-      case "sound3":
-      case "sound4":
-      case "sound5":
-      case "sound6":
+      case "sound":
         return Icon(Icons.equalizer);
+      case "fire":
+        return Icon(Icons.whatshot);
+      case "flappybird":
+        return Icon(Icons.flight_takeoff);
+      case "breakout":
+        return Icon(Icons.code);
+      case "video":
+        return Icon(Icons.play_arrow);
       default:
         return Icon(Icons.star);
     }

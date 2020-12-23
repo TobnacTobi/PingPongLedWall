@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:controll_app/widgets/buttons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mic_stream/mic_stream.dart';
@@ -74,30 +75,30 @@ class _SoundModePageState extends State < SoundModePage > implements ConnectionI
         //imag = imag.sublist(0,end_idx);
 
         active = false;
-        for (var i = 0; i < values.length; i++) {
-          values[i] = 0;
-        }
+        //for (var i = 0; i < values.length; i++) {
+        //  values[i] = 0;
+        //}
         for (var i=0; i < end_idx; i++){
           final magnitude = math.sqrt(real[i]*real[i]);
 
           // Specifically made for width of 15
           //values[(i*width/end_idx).floor()]+=magnitude;
           if(i >= 0 && i < 4){
-            values[0]+=magnitude;
+            values[0]+=magnitude*5;
           }else if(i >= 4 && i < 6){
-            values[1]+=magnitude;
+            values[1]+=magnitude*5;
           }else if(i >= 6 && i < 8){
-            values[2]+=magnitude;
+            values[2]+=magnitude*5;
           }else if(i >= 8 && i < 10){
-            values[3]+=magnitude;
+            values[3]+=magnitude*5;
           }else if(i >= 10 && i < 14){
-            values[4]+=magnitude;
+            values[4]+=magnitude*2.5;
           }else if(i >= 14 && i < 19){
-            values[5]+=magnitude;
+            values[5]+=magnitude*2;
           }else if(i >= 19 && i < 25){
-            values[6]+=magnitude;
+            values[6]+=magnitude*1.6;
           }else if(i >= 25 && i < 33){
-            values[7]+=magnitude;
+            values[7]+=magnitude*1.5;
           }else if(i >= 33 && i < 44){
             values[8]+=magnitude;
           }else if(i >= 44 && i < 59){
@@ -115,13 +116,13 @@ class _SoundModePageState extends State < SoundModePage > implements ConnectionI
           }else if(i >= 254 && i < 339){
             values[15]+=magnitude/8;
           }else if(i >= 339 && i < 454){
-            values[16]+=magnitude/10;
+            values[16]+=magnitude/5;
           }else if(i >= 454 && i < 607){
-            values[17]+=magnitude/15;
+            values[17]+=magnitude/7;
           }else if(i >= 607 && i < 812){
-            values[18]+=magnitude/20;
+            values[18]+=magnitude/8;
           }else if(i >= 812 && i < 1085){
-            values[19]+=magnitude/27;
+            values[19]+=magnitude/10;
           }
 
           /*if(i >= 0 && i < 2){
@@ -167,11 +168,8 @@ class _SoundModePageState extends State < SoundModePage > implements ConnectionI
           }*/
         }
 
-        for (var i = 0; i < values.length; i++) {
-          values[i] = math.min(height.toDouble(), values[i]*(sensitivity/10000)/height);
-        }
         active = true;
-        //sendData(values);
+        sendData();
       });
     }
 
@@ -225,18 +223,26 @@ class _SoundModePageState extends State < SoundModePage > implements ConnectionI
             });
           })
           ],),
+          ControllerButtons(connection: widget.connection),
         ]
       ),
     ), widget.connection);
   }
 
-  void sendData(values) {
+  void sendData() {
     if(!active){
       return;
+    }
+    for (var i = 0; i < values.length; i++) {
+      values[i] = math.min(height.toDouble(), values[i]*(sensitivity/10000)/height);
+      //values[i] = math.min(height.toDouble(), values[i]*(sensitivity/10000)/height).round().toDouble();
     }
     Map < String, dynamic > settings = Map < String, dynamic > ();
     settings['values'] = values;
     widget.connection.sendModeSettings(settings);
+    for (var i = 0; i < values.length; i++) {
+      values[i] = 0;
+    }
   }
 
   void receiveMode(Map < String, dynamic > message) {
@@ -263,9 +269,9 @@ class _SoundModePageState extends State < SoundModePage > implements ConnectionI
     for (var i = 0; i < values.length; i++) {
       values[i] = 0;
     }
-    timer = Timer.periodic(Duration(milliseconds: 20), (timer) {
-      sendData(values);
-    });
+    //timer = Timer.periodic(Duration(milliseconds: 20), (timer) {
+    //  sendData();
+    //});
     super.initState();
   }
 

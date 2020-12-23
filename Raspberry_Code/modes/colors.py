@@ -5,7 +5,6 @@ from random import random
 import math
 from opensimplex import OpenSimplex
 
-changeAfterSeconds = 30
 FrameRate = 60
 
 class Colors(Mode):
@@ -13,6 +12,7 @@ class Colors(Mode):
 
     def run(self):
         while(not self.stop):
+            self.circle()
             self.waves()
             self.spiral()
             self.diagonal_rainbow()
@@ -20,6 +20,7 @@ class Colors(Mode):
             self.rainbow_rotate()
             self.noise()
             self.random_colors()
+            
 
     def waves(self):
         timepast = 0
@@ -49,6 +50,42 @@ class Colors(Mode):
             angle = (angle + speed) % (math.pi*2)
             lasttime = self.wait(lasttime)
             timepast += 1/FrameRate
+
+    def circle(self):
+        start_color_hue_angle = 0.0
+        timepast = 0
+        width = self.display.width
+        height = self.display.height
+        maxdistance = math.sqrt((width/2)*(width/2) + (height/2)*(height/2))
+        posx = width/2
+        posy = height/2
+        movement = OpenSimplex(math.floor(random()*1000))
+        angle = 0
+        speed = self.speed*0.0002
+        size = 5/self.size
+        lasttime = self.wait()
+        i = 0
+        while(not self.changeAnimation(timepast)):
+            if(self.changeRequest):
+                speed = self.speed*0.0002
+                size = 5/self.size
+                self.changeRequest = False
+            posx = max(0, min(posx + (movement.noise2d(0, i/500))*speed, self.display.width))
+            posy = max(0, min(posy + (movement.noise2d(300, i/500))*speed, self.display.height))
+            for x in range(width):
+                for y in range(height):
+                    distance = math.sqrt((x-posx)*(x-posx) + (y-posy)*(y-posy))
+                    self.display.drawPixel(x, y, 
+                        color_convert.HSVtoRGB(
+                            -start_color_hue_angle+size*distance/maxdistance % 1.0,
+                            1, 1))
+            start_color_hue_angle+=speed
+            angle = (angle + 0.05) % (math.pi*2)
+            if(start_color_hue_angle>1):
+                start_color_hue_angle = 0
+            lasttime = self.wait(lasttime)
+            timepast += 1/FrameRate
+            i+=1
     
     def spiral(self):
         start_color_hue_angle = 0.0

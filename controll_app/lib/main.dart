@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ConnectionPage(connection: connection),
-      //home: SoundModePage(connection: connection),
+      //home: ConnectionPage(connection: connection),
+      home: DrawModePage(connection: connection),
       builder: EasyLoading.init(),
     );
   }
