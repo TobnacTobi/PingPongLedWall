@@ -20,6 +20,7 @@ class BreakoutModePage extends StatefulWidget {
 class _BreakoutModePageState extends State<BreakoutModePage> implements ConnectionInterface{
   List<String> received = new List<String>();
   double slidervalue = 50;
+  int platformposition = 50;
   SharedPreferences prefs;
 
   @override
@@ -35,7 +36,10 @@ class _BreakoutModePageState extends State<BreakoutModePage> implements Connecti
             setState(() {
               slidervalue = v;
             });
-            sendSlider();
+            if(slidervalue.floor() != platformposition){
+              platformposition = slidervalue.floor();
+              sendSlider();
+            }
           }),
         ],
       ),
@@ -44,7 +48,7 @@ class _BreakoutModePageState extends State<BreakoutModePage> implements Connecti
 
   void sendSlider() {
     Map < String, dynamic > settings = Map < String, dynamic > ();
-    settings['position'] = slidervalue;
+    settings['position'] = platformposition;
     widget.connection.sendModeSettings(settings);
   }
 
