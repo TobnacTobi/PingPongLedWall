@@ -20,6 +20,7 @@ from modes.sound import Sound
 from modes.fire import Fire
 from modes.breakout import Breakout
 from modes.flappybird import FlappyBird
+from modes.off import Off
 from displays.display import Display
 from connection import Connection
 
@@ -44,7 +45,8 @@ class Main:
         # self.setMode(Sound(self, self.display))
         # self.setMode(Breakout(self, self.display))
         # self.setMode(Fire(self, self.display))
-        self.setMode(FlappyBird(self, self.display))
+        # self.setMode(FlappyBird(self, self.display))
+        self.setMode(Off(self, self.display))
 
     def run(self):
         while(True):
@@ -104,6 +106,8 @@ class Main:
             modeInstance = Breakout(self, self.display)
         elif(mode == 'flappybird'):
             modeInstance = FlappyBird(self, self.display)
+        elif(mode == 'off'):
+            modeInstance = Off(self, self.display)
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)
