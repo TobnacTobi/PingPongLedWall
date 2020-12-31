@@ -4,14 +4,19 @@ from PIL import ImageFont
 from PIL import ImageDraw
 import numpy as np
 import os
+import matplotlib.font_manager as fm
 
 def char_to_pixels(text, path='./fonts/arialbd.ttf', fontsize=14):
     """
     Based on https://stackoverflow.com/a/27753869/190597 (jsheperd)
     """
-    font = ImageFont.truetype(path, fontsize) 
+    # font = ImageFont.load_default()
+    font = ImageFont.truetype(path, fontsize)
+    # font = ImageFont.truetype(fm.findfont(fm.FontProperties(family='Helvetica')),fontsize)
+    
     # PATH RELATIVE TO cwd:
     #print(os.path.isfile(path))
+    
     #font = ImageFont.truetype('./Raspberry_Code/displays/fonts/dig.ttf', fontsize) 
     w, h = font.getsize(text)  
     h *= 2

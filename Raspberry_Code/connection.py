@@ -5,7 +5,7 @@ import sys
 
 HEADER = 64
 FORMAT = "utf-8"
-DISCONNECT_MESSAGE = '{type:"DISCONNECT"'
+DISCONNECT_MESSAGE = '{"type":"DISCONNECT"'
 SEPARATOR = "|"
 
 class Connection(threading.Thread):
@@ -20,7 +20,9 @@ class Connection(threading.Thread):
     def run(self):
         print("[STARTING] Server is starting")
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind(("0.0.0.0", 8942))
+        print("[OPEN] Server is accessible under: " + str(server_socket.getsockname()))
         server_socket.listen(2)
         while(True):
             (client_socket, addr) = server_socket.accept()
@@ -47,6 +49,7 @@ class Connection(threading.Thread):
                     if(piece.startswith(DISCONNECT_MESSAGE) or not piece):
                         connected = False
                         self.client_sockets.remove(conn)
+                        print('client removed')
                     try:
                         self.handleMessage(json.loads(piece), conn)
                         print(f"[{addr}] {piece}")
