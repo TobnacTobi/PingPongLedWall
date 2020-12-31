@@ -12,7 +12,7 @@ class DVD(Mode):
     points = []
     trails = []
     vels = []
-    size = 20
+    length = 20
     pointstyle = "rainbow"
     pointcolor0 = (255, 255, 255, 255)
     pointcolor1 = (255, 255, 255, 255)
@@ -26,10 +26,10 @@ class DVD(Mode):
             (x, y) = (math.floor(random.randint(0, self.display.width-1)), math.floor(random.randint(0, self.display.height-1)))
             self.points.append((x, y))
             tmp = []
-            for i in range(self.size - 1):
+            for i in range(self.length - 1):
                 tmp.append((x, y))
             self.trails.append(tmp)
-            self.vels.append(( ([-1,1][random.randint(0,1)])*(random.random() + 0.5)*self.speed / 60 ,   ([-1,1][random.randint(0,1)])*(random.random() + 0.5)*self.speed / 60))
+            self.vels.append(( ([-1,1][random.randint(0,1)])*(random.random() + 0.5)/ 60 ,   ([-1,1][random.randint(0,1)])*(random.random() + 0.5)/ 60))
         while(not self.stop):
             self.draw()
             self.calc()
@@ -46,12 +46,15 @@ class DVD(Mode):
                         ispoint = True
                         break
                 if(not ispoint):
-                    self.display.drawPixel(x, y, self.getBackgroundColor(x, y))
+                    self.display.drawPixel(x, y,self.getBackgroundColor(x, y))
 
     def calc(self):
         for point in range(self.pointnumber):
             (x, y) = self.points[point]
+            xvel = yvel = 0
             (xvel, yvel) = self.vels[point]
+            xvel = xvel*self.speed
+            yvel = yvel*self.speed
             (tmpx, tmpy) = (x, y)
             x += xvel
             y += yvel
@@ -70,22 +73,22 @@ class DVD(Mode):
                 xvel = abs(xvel)
             if(y <= 0):
                 yvel = abs(yvel)
-            self.vels[point] = (xvel, yvel)
+            self.vels[point] = (xvel/self.speed, yvel/self.speed)
 
     def getPointColor(self, x, y, index = 0, pointnr = 0):
-        opacity = 1 - (abs(self.size/3-index)/(self.size-self.size/3))
+        opacity = 1 - (abs(self.length/3-index)/(self.length-self.length/3))
         if(self.pointstyle == 'solid'):
             return color_convert.MixColors(self.pointcolor0[:-1], self.getBackgroundColor(x, y), self.pointcolor0[-1] * opacity /255)
         if(self.pointstyle == 'fadeHorizontal'):
             length = self.display.width
             p = ((x + self.xpos)%length)/length
             frontcolor = color_convert.MixColors(self.pointcolor0, self.pointcolor1, p)
-            return color_convert.MixColors(frontcolor[:-1], self.getBackgroundColor(x, y), frontcolor[-1] * opacity)
+            return color_convert.MixColors(frontcolor[:-1], self.getBackgroundColor(x, y), frontcolor[-1] * opacity /255)
         if(self.pointstyle == 'fadeVertical'):
             length = self.display.height
             p = (y%length)/length
             frontcolor = color_convert.MixColors(self.pointcolor0, self.pointcolor1, p)
-            return color_convert.MixColors(frontcolor[:-1], self.getBackgroundColor(x, y), frontcolor[-1] * opacity)
+            return color_convert.MixColors(frontcolor[:-1], self.getBackgroundColor(x, y), frontcolor[-1] * opacity/255)
         if(self.pointstyle == 'rainbow'):
             xpos = time.time()*0.05*(pointnr+1)%1
             size = 30/self.size
