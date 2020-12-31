@@ -63,7 +63,7 @@ class _SettingsPageState extends State < SettingsPage > implements ConnectionInt
             Text(' Speed: '),
             Expanded(child: Slider(
             value: _speed.toDouble(),
-            min: 0,
+            min: 1,
             max: 100,
             divisions: 100,
             label: _speed.toString(),
@@ -88,7 +88,7 @@ class _SettingsPageState extends State < SettingsPage > implements ConnectionInt
             Text(' Size: '),
             Expanded(child: Slider(
             value: _size.toDouble(),
-            min: 0,
+            min: 1,
             max: 100,
             divisions: 100,
             label: _size.toString(),

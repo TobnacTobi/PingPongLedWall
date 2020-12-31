@@ -9,7 +9,7 @@ class Connection {
   //WebSocket ws;
   Socket _socket;
   ConnectionInterface parent;
-  String defaultAddress = "192.168.178.82";
+  String defaultAddress = "192.168.178.129";
   num defaultPort = 8942;
   String separator = "|"; // separates messages from each other
   Map<String, dynamic> message = {"type": "HELLO", "data": "", "comment": ""};

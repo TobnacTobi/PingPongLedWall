@@ -47,8 +47,8 @@ class Text(Mode):
     def displayText(self):
         displayWidth = self.display.width
         displayHeight = self.display.height
-        maxheight = self.display.height - 2
-        y0 = math.floor((self.display.height - min(maxheight, self.size))/2)+2
+        # maxheight = self.display.height - 2
+        y0 = math.floor((self.display.height - self.size)/2)+2
         #self.display.clear()
         for x in range(displayWidth):
             for y in range(displayHeight):
@@ -58,8 +58,8 @@ class Text(Mode):
                     self.display.drawPixel(x, y, self.getBackgroundColor(x, y))
 
     def getTextMatrix(self):
-        maxheight = self.display.height - 2
-        return texts.char_to_pixels(self.text, fontsize=min(maxheight, self.size))
+        # maxheight = self.display.height - 2
+        return texts.char_to_pixels(self.text, fontsize=self.size)
 
     def getTextColor(self, x, y, y0):
         tr0, tg0, tb0, ta0 = self.textcolor0
