@@ -4,10 +4,10 @@ class Display:
     width = 20
     height = 15
     def __init__(self):
-        from .pygame_display import PYGameDisplay
-        self.display = PYGameDisplay(self.width, self.height)
-        #from .led_display import LEDDisplay
-        #self.display = LEDDisplay(20, 15)
+        #from .pygame_display import PYGameDisplay
+        #self.display = PYGameDisplay(self.width, self.height)
+        from .led_display import LEDDisplay
+        self.display = LEDDisplay(20, 15)
 
     def drawPixel(self, x, y, color):
         self.display.drawPixel(x, y, color)
