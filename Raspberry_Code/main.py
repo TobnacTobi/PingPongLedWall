@@ -46,10 +46,7 @@ class Main:
         # self.setMode(Breakout(self, self.display))
         # self.setMode(Fire(self, self.display))
         # self.setMode(FlappyBird(self, self.display))
-<<<<<<< HEAD
-=======
-        self.setMode(Off(self, self.display))
->>>>>>> c0cf9c0ba8429d906434979d197487376b300140
+        # self.setMode(Off(self, self.display))
 
     def run(self):
         while(True):
