@@ -4,6 +4,8 @@ from displays import color_convert
 from random import random
 import math
 from opensimplex import OpenSimplex
+from PIL import Image
+import numpy as np
 
 FrameRate = 60
 
@@ -12,6 +14,7 @@ class Colors(Mode):
 
     def run(self):
         while(not self.stop):
+            self.mandelbrot()
             self.circle()
             self.waves()
             self.spiral()
@@ -21,6 +24,52 @@ class Colors(Mode):
             self.noise()
             self.random_colors()
             
+    def getMandelbrot(self, zoom): # zoom value in (0, 1]
+        # drawing area 
+        #point = (-math.e/7, -math.e/20)
+        #point = (-0.761574,-0.0847596)
+        point = (-0.7746806106269039, -0.1374168856037867)
+        xa = point[0] - zoom
+        xb = point[0] + zoom
+        ya = point[1] - zoom
+        yb = point[1] + zoom
+
+        # max iterations allowed 
+        maxIt = 255 
+
+        # image size 
+        imgx = self.display.width
+        imgy = self.display.height
+        image = Image.new("RGB", (imgx, imgy)) 
+
+        for y in range(imgy): 
+            zy = y * (yb - ya) / (imgy - 1)  + ya 
+            for x in range(imgx): 
+                zx = x * (xb - xa) / (imgx - 1)  + xa 
+                z = zx + zy * 1j
+                c = z 
+                for i in range(maxIt): 
+                    if abs(z) > 2.0: break
+                    z = z * z + c 
+                image.putpixel((x, y), ((30 * i) % 256, (4 * i) % 256, (255 - (30 * i)) % 256))
+                #image.putpixel((x, y), (i % 4 * 64, i % 8 * 32, i % 16 * 16)) 
+        arr = np.asarray(image)
+        return arr
+
+    def mandelbrot(self):
+        timepast = 0
+        lasttime = self.wait()
+        zoom = 2
+        while(not self.changeAnimation(timepast)):
+            arr = self.getMandelbrot(zoom)
+            for y in range(self.display.height):
+                for x in range(self.display.width):
+                    self.display.drawPixel(x, y, arr[y][x])
+            lasttime = self.wait(lasttime)
+            timepast += 1/FrameRate
+            zoom = zoom*(0.99**(10/self.speed))
+
+
 
     def waves(self):
         timepast = 0

@@ -31,7 +31,7 @@ class Main:
         self.current_mode = None
         self.setConnection()
         self.display = Display()
-        # self.setMode(Colors(self, self.display))
+        self.setMode(Colors(self, self.display))
         # self.setMode(Text(self, self.display))
         # self.setMode(Clock(self, self.display))
         # self.setMode(Menu(self, self.display))
@@ -44,7 +44,7 @@ class Main:
         # self.setMode(Sound(self, self.display))
         # self.setMode(Breakout(self, self.display))
         # self.setMode(Fire(self, self.display))
-        self.setMode(FlappyBird(self, self.display))
+        # self.setMode(FlappyBird(self, self.display))
 
     def run(self):
         while(True):
