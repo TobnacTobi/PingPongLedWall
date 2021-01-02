@@ -30,8 +30,8 @@ class Connection(threading.Thread):
             thread.start()
 
     def handleClient(self, conn, addr):
-        print(f"[NEW CONNECTION] from: {addr} | Total Connections: {threading.activeCount() - 3}")
         self.client_sockets.append(conn)
+        print(f"[NEW CONNECTION] from: {addr} | Total Connections: {len(self.client_sockets)}")
         connected = True
         while connected:
             #msg_length = conn.recv(HEADER)
@@ -41,21 +41,36 @@ class Connection(threading.Thread):
             #    msg_length = int(msg_length)
             #    print(msg_length)
             msg = ""
-            while True:
-                msg += conn.recv(1024).decode(FORMAT)
-                pieces = msg.split(SEPARATOR)
-                msg = pieces.pop()
-                for piece in pieces:
-                    if(piece.startswith(DISCONNECT_MESSAGE) or not piece):
-                        connected = False
-                        self.client_sockets.remove(conn)
-                        print('client removed')
-                    try:
-                        self.handleMessage(json.loads(piece), conn)
-                        print(f"[{addr}] {piece}")
-                    except Exception as e: 
-                        print(e)
-                        print('Message couldnt be handled')
+            try:
+                while(True and conn in self.client_sockets):
+                    msg += conn.recv(1024).decode(FORMAT)
+                    pieces = msg.split(SEPARATOR)
+                    msg = pieces.pop()
+                    for piece in pieces:
+                        if(piece.startswith(DISCONNECT_MESSAGE) or not piece):
+                            connected = False
+                            self.client_sockets.remove(conn)
+                            print('client removed')
+                        try:
+                            self.handleMessage(json.loads(piece), conn)
+                            print(f"[{addr}] {piece}")
+                        except Exception as e: 
+                            print(e)
+                            print('Message couldnt be handled -> Removing client')
+                            try:
+                                connected = False
+                                self.client_sockets.remove(conn)
+                                print('client removed')
+                            except ValueError as e:
+                                print('could not remove client (not found)')
+            except ConnectionResetError as e:
+                connected = False
+                print('Connection Error')
+                try:
+                    self.client_sockets.remove(conn)
+                    print('client removed')
+                except ValueError as e:
+                    print('could not remove client (not found)')
 
         conn.close()
 
@@ -90,9 +105,16 @@ class Connection(threading.Thread):
     def sendMessage(self, message, conn = None):
         if(conn is None):
             for s in self.client_sockets:
-                s.send(json.dumps(message).encode(FORMAT))
+                try:
+                    s.send(json.dumps(message).encode(FORMAT))
+                except Exception as e:
+                    print('Message could not be sent -> Removing client')
+                    self.client_sockets.remove(s)
         else:
-            conn.send(json.dumps(message).encode(FORMAT))
+            try:
+                conn.send(json.dumps(message).encode(FORMAT))
+            except Exception as e:
+                self.client_socket.remove(conn)
         #if(self.client_socket is None or self.addr is None):
         #    return False
         #self.client_socket.send(json.dumps(message).encode(FORMAT))
