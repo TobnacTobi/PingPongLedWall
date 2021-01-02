@@ -14,7 +14,6 @@ class Colors(Mode):
 
     def run(self):
         while(not self.stop):
-            self.mandelbrot()
             self.circle()
             self.waves()
             self.spiral()
@@ -23,6 +22,7 @@ class Colors(Mode):
             self.rainbow_rotate()
             self.noise()
             self.random_colors()
+            self.mandelbrot()
             
     def getMandelbrot(self, zoom): # zoom value in (0, 1]
         # drawing area 
