@@ -1,6 +1,12 @@
+import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:image/image.dart' as imagelib;
+import 'package:image/image.dart'
+as imagelib;
+import 'package:camera/camera.dart';
+import 'package:ffi/ffi.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -8,7 +14,12 @@ import 'package:flutter/material.dart';
 
 import '../connection.dart';
 import '../connectionPage.dart';
+import '../settings.dart';
 import '../widgets/page.dart';
+import 'package:flutter/services.dart';
+
+typedef convert_func = Pointer < Uint32 > Function(Pointer < Uint8 > , Pointer < Uint8 > , Pointer < Uint8 > , Int32, Int32, Int32, Int32);
+typedef Convert = Pointer < Uint32 > Function(Pointer < Uint8 > , Pointer < Uint8 > , Pointer < Uint8 > , int, int, int, int);
 
 class VideoModePage extends StatefulWidget {
   final Connection connection;
@@ -23,44 +34,122 @@ class VideoModePage extends StatefulWidget {
 }
 
 class _VideoModePageState extends State < VideoModePage > implements ConnectionInterface {
-  String _image;
   double width = 20;
   double height = 15;
 
-  @override
-  Widget build(BuildContext context) {
-    return DefaultPage("Video", GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: < Widget > [
+  CameraController _camera;
+  bool enableSend = false;
+  bool _cameraInitialized = false;
+  CameraImage _savedImage;
+  imagelib.Image img;
+  Timer timer;
 
-          SizedBox(height: 10),
-          Visibility(
-            //visible: _image != null,
-            visible: true,
-            child: SizedBox(width: double.infinity,
-              child: RaisedButton(
-                onPressed: sendImage,
-                child: Text('Set Image'),
-              )), )
-        ]
+  final DynamicLibrary convertImageLib = Platform.isAndroid ?
+    DynamicLibrary.open("libconvertImage.so") :
+    DynamicLibrary.process();
+  Convert conv;
+
+  Widget build(BuildContext context) {
+    List < Widget > actions = [];
+    actions.add(IconButton(icon: Icon(Icons.settings), onPressed: () {
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SettingsPage(connection: widget.connection)));
+    }));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Video"),
+        actions: actions
       ),
-    ), widget.connection);
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child:
+            (_cameraInitialized) ?
+            AspectRatio(aspectRatio: _camera.value.aspectRatio,
+              child: CameraPreview(_camera), ) :
+            CircularProgressIndicator()
+          ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          setState(() {
+            enableSend = !enableSend;
+          });
+        },
+        child: Icon(enableSend?Icons.camera_alt:Icons.camera_alt_outlined, color: enableSend?Colors.green:Colors.red,),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
   }
 
   void sendImage() {
+    if(!enableSend){
+      return;
+    }
     Map < String, dynamic > settings = Map < String, dynamic > ();
+
+    // Allocate memory for the 3 planes of the image
+    Pointer<Uint8> p = allocate(count: _savedImage.planes[0].bytes.length);
+    Pointer<Uint8> p1 = allocate(count: _savedImage.planes[1].bytes.length);
+    Pointer<Uint8> p2 = allocate(count: _savedImage.planes[2].bytes.length);
+
+    // Assign the planes data to the pointers of the image
+    Uint8List pointerList = p.asTypedList(_savedImage.planes[0].bytes.length);
+    Uint8List pointerList1 = p1.asTypedList(_savedImage.planes[1].bytes.length);
+    Uint8List pointerList2 = p2.asTypedList(_savedImage.planes[2].bytes.length);
+    pointerList.setRange(0, _savedImage.planes[0].bytes.length, _savedImage.planes[0].bytes);
+    pointerList1.setRange(0, _savedImage.planes[1].bytes.length, _savedImage.planes[1].bytes);
+    pointerList2.setRange(0, _savedImage.planes[2].bytes.length, _savedImage.planes[2].bytes);
+
+    // Call the convertImage function and convert the YUV to RGB
+    Pointer<Uint32> imgP = conv(p, p1, p2, _savedImage.planes[1].bytesPerRow,
+      _savedImage.planes[1].bytesPerPixel, _savedImage.width, _savedImage.height);
+    // Get the pointer of the data returned from the function to a List
+    List imgData = imgP.asTypedList((_savedImage.width * _savedImage.height));
+
+    // Generate image from the converted data  
+    img = imagelib.Image.fromBytes(_savedImage.height, _savedImage.width, imgData);
     
-    imagelib.Image img = imagelib.decodeImage(base64.decode(_image.split(',').last));
+    // Free the memory space allocated
+    // from the planes and the converted data
+    free(p);
+    free(p1);
+    free(p2);
+    free(imgP);
+
+    img = imagelib.copyRotate(img, 90);
     img = imagelib.copyResize(img, height: height.floor(), width: width.floor());
     settings['image'] = base64Encode(imagelib.encodeJpg(img));
 
     widget.connection.sendModeSettings(settings);
+  }
+
+  void _initializeCamera() async {
+    // Get list of cameras of the device
+    List < CameraDescription > cameras = await availableCameras();
+    // Create the CameraController
+    _camera = new CameraController(
+      cameras[0], ResolutionPreset.low
+    );
+    // Initialize the CameraController
+    _camera.initialize().then((_) async {
+      // Start ImageStream
+      await _camera.startImageStream((CameraImage image) =>
+        _processCameraImage(image));
+      setState(() {
+        _cameraInitialized = true;
+      });
+    });
+  }
+
+  void _processCameraImage(CameraImage image) async {
+    if(!this.mounted){
+      _camera.stopImageStream();
+      _camera.dispose();
+      return;
+    }
+    setState(() {
+      _savedImage = image;
+    });
   }
 
 
@@ -84,11 +173,31 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
 
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
     widget.connection.setParent(this);
+    // Load the convertImage() function from the library
+    conv = convertImageLib
+      .lookup < NativeFunction < convert_func >> ('convertImage')
+      .asFunction < Convert > ();
+    _initializeCamera();
+    timer = new Timer.periodic(Duration(milliseconds: 250), (Timer t) => sendImage());
     super.initState();
   }
   @override
   void dispose() {
+    try {
+      _camera.stopImageStream().then((value) => _camera.dispose());
+    } catch (e) {
+    }
+    SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  timer.cancel();
     super.dispose();
   }
 

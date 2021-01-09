@@ -6,6 +6,7 @@ from modes.mode import Mode
 from modes.colors import Colors
 from modes.menu import Menu
 from modes.clock import Clock
+from modes.clockanalog import ClockAnalog
 from modes.text import Text
 from modes.pointmoving import PointMoving
 from modes.dvd import DVD
@@ -18,6 +19,8 @@ from modes.tetris import Tetris
 from modes.life import GameOfLife
 from modes.sound import Sound
 from modes.fire import Fire
+from modes.rain import Rain
+from modes.twinkle import Twinkle
 from modes.breakout import Breakout
 from modes.flappybird import FlappyBird
 from modes.off import Off
@@ -32,7 +35,7 @@ class Main:
         self.current_mode = None
         self.setConnection()
         self.display = Display()
-        self.setMode(Colors(self, self.display))
+        # self.setMode(Colors(self, self.display))
         # self.setMode(Text(self, self.display))
         # self.setMode(Clock(self, self.display))
         # self.setMode(Menu(self, self.display))
@@ -47,6 +50,9 @@ class Main:
         # self.setMode(Fire(self, self.display))
         # self.setMode(FlappyBird(self, self.display))
         # self.setMode(Off(self, self.display))
+        # self.setMode(ClockAnalog(self, self.display))
+        # self.setMode(Rain(self, self.display))
+        self.setMode(Twinkle(self, self.display))
 
     def run(self):
         while(True):
@@ -74,6 +80,8 @@ class Main:
         modeInstance = None
         if(mode == 'clock'):
             modeInstance = Clock(self, self.display)
+        elif(mode == 'clockanalog'):
+            modeInstance = ClockAnalog(self, self.display)
         elif(mode == 'colors'):
             modeInstance = Colors(self, self.display)
         elif(mode == 'menu'):
@@ -102,6 +110,10 @@ class Main:
             modeInstance = Sound(self, self.display)
         elif(mode == 'fire'):
             modeInstance = Fire(self, self.display)
+        elif(mode == 'rain'):
+            modeInstance = Rain(self, self.display)
+        elif(mode == 'twinkle'):
+            modeInstance = Twinkle(self, self.display)
         elif(mode == 'breakout'):
             modeInstance = Breakout(self, self.display)
         elif(mode == 'flappybird'):

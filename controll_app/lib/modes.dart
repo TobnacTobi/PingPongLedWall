@@ -56,6 +56,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
   void setMode(String mode){
     Navigator.of(context).popUntil((route) => route.isFirst);
     switch (mode) {
+      case "clockanalog":
       case "clock":
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ClockModePage(connection: widget.connection))).then((value){
           returnToThis(value);
@@ -144,6 +145,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
 
   Icon getIconByMode(String mode){
     switch (mode) {
+      case "clockanalog":
       case "clock":
         return Icon(Icons.query_builder);
       case "colors":

@@ -1,0 +1,70 @@
+{
+  "variant": {
+    "module": {
+      "rootBuildGradleFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android",
+      "sdkFolder": "C:\\Users\\Tobia\\AppData\\Local\\Android\\sdk",
+      "isNativeCompilerSettingsCacheEnabled": false,
+      "isBuildOnlyTargetAbiEnabled": true,
+      "splitsAbiFilterSet": [],
+      "intermediatesFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\build\\app\\intermediates",
+      "gradleModulePathName": ":app",
+      "moduleRootFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app",
+      "makeFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\CMakeLists.txt",
+      "buildSystem": "CMAKE",
+      "compilerSettingsCacheFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\.cxx",
+      "cxxFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx",
+      "ndkFolder": "C:\\Users\\Tobia\\AppData\\Local\\Android\\sdk\\ndk\\22.0.7026061",
+      "ndkVersion": "22.0.7026061",
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "cmakeToolchainFile": "."
+    },
+    "buildSystemArgumentList": [],
+    "cFlagList": [],
+    "cppFlagsList": [],
+    "variantName": "debug",
+    "soFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\build\\app\\intermediates\\cmake\\debug\\lib",
+    "objFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\build\\app\\intermediates\\cmake\\debug\\obj",
+    "jsonFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug",
+    "gradleBuildOutputFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug",
+    "isDebuggableEnabled": true,
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A",
+      "X86",
+      "X86_64"
+    ],
+    "buildTargetSet": []
+  },
+  "abi": "ARMEABI_V7A",
+  "abiPlatformVersion": 21,
+  "cxxBuildFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug\\armeabi-v7a",
+  "jsonFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug\\armeabi-v7a\\android_gradle_build.json",
+  "gradleBuildOutputFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a",
+  "objFolder": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\build\\app\\intermediates\\cmake\\debug\\obj\\armeabi-v7a",
+  "buildCommandFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug\\armeabi-v7a\\build_command.txt",
+  "buildOutputFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug\\armeabi-v7a\\build_output.txt",
+  "modelOutputFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug\\armeabi-v7a\\build_model.json",
+  "cmake": {
+    "cmakeListsWrapperFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a\\CMakeLists.txt",
+    "toolchainWrapperFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a\\android_gradle_build.toolchain.cmake",
+    "buildGenerationStateFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a\\build_generation_state.json",
+    "cacheKeyFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a\\compiler_cache_key.json",
+    "compilerCacheUseFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a\\compiler_cache_use.json",
+    "compilerCacheWriteFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a\\compiler_cache_write.json",
+    "toolchainSettingsFromCacheFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cxx\\debug\\armeabi-v7a\\compiler_settings_cache.cmake",
+    "cmakeWrappingBaseFolder": "."
+  },
+  "jsonGenerationLoggingRecordFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug\\armeabi-v7a\\json_generation_record.json",
+  "compileCommandsJsonFile": "A:\\OwnCloud\\Privat\\Projekte\\PingPongLedWall\\controll_app\\android\\app\\.cxx\\cmake\\debug\\armeabi-v7a\\compile_commands.json"
+}

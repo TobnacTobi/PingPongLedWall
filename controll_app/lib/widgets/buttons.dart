@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:path_drawing/path_drawing.dart';
+import 'package:control_pad/control_pad.dart';
 
 import '../connection.dart';
 
@@ -20,12 +21,22 @@ class ControllerButtons extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
-    return Stack(
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
+    print(w);
+    print(h);
+    return 
+    /*JoystickView(interval: Duration(milliseconds: 100), onDirectionChanged: (a, b){
+      print(a);
+      print(b);
+    },);*/
+    Stack(
           children: <Widget>[
             _getClippedImage(
               clipper: _Clipper(
                 svgPath: svgUP,
-                offset: Offset(45, -14),
+                //offset: Offset(45, -14),
+                offset: Offset(w*0.115, -h*0.018),
               ),
               image: 'assets/whole_button.png',
               onClick: (){_handleClick('up');},
@@ -33,7 +44,8 @@ class ControllerButtons extends StatelessWidget{
             _getClippedImage(
               clipper: _Clipper(
                 svgPath: svgDOWN,
-                offset: Offset(65, 275),
+                //offset: Offset(65, 275),
+                offset: Offset(w*0.165, h*0.357),
               ),
               image: 'assets/whole_button.png',
               onClick: (){_handleClick('down');},
@@ -41,7 +53,8 @@ class ControllerButtons extends StatelessWidget{
             _getClippedImage(
               clipper: _Clipper(
                 svgPath: svgLEFT,
-                offset: Offset(-10, 50),
+                //offset: Offset(-10, 50),
+                offset: Offset(-w*0.025, h*0.065),
               ),
               image: 'assets/whole_button.png',
               onClick: (){_handleClick('left');},
@@ -49,7 +62,8 @@ class ControllerButtons extends StatelessWidget{
             _getClippedImage(
               clipper: _Clipper(
                 svgPath: svgRIGHT,
-                offset: Offset(280, 50),
+                //offset: Offset(280, 50),
+                offset: Offset(w*0.712, h*0.065),
               ),
               image: 'assets/whole_button.png',
               onClick: (){_handleClick('right');},
@@ -57,7 +71,8 @@ class ControllerButtons extends StatelessWidget{
             _getClippedImage(
               clipper: _Clipper(
                 svgPath: svgCENTER,
-                offset: Offset(80, 80),
+                //offset: Offset(80, 80),
+                offset: Offset(w*0.2, h*0.104),
               ),
               image: 'assets/whole_button.png',
               onClick: (){_handleClick('center');},

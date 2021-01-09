@@ -131,11 +131,11 @@ class Clock(Mode):
         if(self.backgroundstyle == 'fadeHorizontal'):
             length = self.display.width
             p = (x%length)/length
-            r, g, b = MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
+            r, g, b = color_convert.MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'fadeVertical'):
             length = self.display.height
             p = (y%length)/length
-            r, g, b = MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
+            r, g, b = color_convert.MixColors(self.backgroundcolor0[:-1], self.backgroundcolor1[:-1], p)
         if(self.backgroundstyle == 'rainbow'):
             xpos = time.time()*0.01%1
             size = 5/self.size

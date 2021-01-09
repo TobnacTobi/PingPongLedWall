@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'connectionPage.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import 'modes/defaultMode.dart';
 import 'modes/drawMode.dart';
 import 'modes/soundMode.dart';
 import 'modes/textMode.dart';
@@ -23,8 +24,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ConnectionPage(connection: connection),
+      //home: ConnectionPage(connection: connection),
       //home: DrawModePage(connection: connection),
+      home: DefaultModePage(connection: connection),
       builder: EasyLoading.init(),
     );
   }
