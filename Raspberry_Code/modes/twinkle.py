@@ -24,14 +24,14 @@ class Twinkle(Mode):
             lasttime = self.wait(lasttime)
 
     def draw(self, step = 0): # make old point less appearant and blend new point in
-        if(step % math.floor(50/self.speed) != 0):
+        if(step % max(1, math.floor(50/self.speed)) != 0):
             return
         for y in range(self.display.height):
             for x in range(self.display.width):
                 self.display.drawPixel(x, y, color_convert.HSVtoRGB(self.color, (1-(self.board[y][x][1]/2)), self.board[y][x][1]))
 
     def calc(self, step = 0):
-        if(step % math.floor(50/self.speed) != 0):
+        if(step % max(1, math.floor(50/self.speed)) != 0):
             return
 
         self.color = (self.color+(self.speed/10000))%1

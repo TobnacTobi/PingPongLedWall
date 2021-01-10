@@ -34,7 +34,7 @@ class Rain(Mode):
                 self.display.drawPixel(x, y, self.colors[self.color][math.floor(self.board[y][x])])
 
     def calc(self, step = 0):
-        if(step % math.floor(50/self.speed) != 0):
+        if(step % max(1, math.floor(50/self.speed)) != 0):
             return
         # shift everything down
         for y in range(len(self.board)-1, 0, -1):
@@ -49,7 +49,7 @@ class Rain(Mode):
 
         # spawn new raindrops with some probability
         for x in range(len(self.board[0])):
-            if(random.random() < self.rainprobability):
+            if(random.random() < self.probability):
                 self.board[0][x] = random.randint(len(self.colors[self.color]) - 6, len(self.colors[self.color])-1)
         
         
