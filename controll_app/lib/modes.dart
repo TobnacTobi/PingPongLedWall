@@ -150,6 +150,10 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         return Icon(Icons.query_builder);
       case "colors":
         return Icon(Icons.invert_colors);
+      case "dvd":
+        return Icon(Icons.insights);
+      case "life":
+        return Icon(Icons.scatter_plot);
       case "menu":
         return Icon(Icons.menu_open);
       case "pointmoving":
@@ -170,6 +174,10 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         return Icon(Icons.equalizer);
       case "fire":
         return Icon(Icons.whatshot);
+      case "rain":
+        return Icon(Icons.umbrella);
+      case "twinkle":
+        return Icon(Icons.grain);
       case "flappybird":
         return Icon(Icons.flight_takeoff);
       case "breakout":

@@ -15,6 +15,9 @@ class Connection {
   Map<String, dynamic> message = {"type": "HELLO", "data": "", "comment": ""};
   int connection_number = 0;
 
+  String address;
+  num port;
+
   Future<bool> connect(String address, num port) async {
     if(address == null || address.length == 0){
       address = defaultAddress;
@@ -31,6 +34,9 @@ class Connection {
         print("An error occured. Redirecting to Connect-Screen.");
         parent.connectionError();
       }, test: (e)=>true);*/
+      
+      this.address = address;
+      this.port = port;
       _socket.listen((List<int> event) {
         receiveMessage(utf8.decode(event));
       });
@@ -57,10 +63,10 @@ class Connection {
   }
 
   Future<bool> close() async {
-    print("closing...");
     if(!isConnected()){
       return false;
     }
+    print("closing...");
     message['type'] = "DISCONNECT";
     sendMessage(message);
     await _socket.flush();

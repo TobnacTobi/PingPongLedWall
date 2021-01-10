@@ -114,7 +114,7 @@ class Connection(threading.Thread):
             try:
                 conn.send(json.dumps(message).encode(FORMAT))
             except Exception as e:
-                self.client_socket.remove(conn)
+                self.client_sockets.remove(conn)
         #if(self.client_socket is None or self.addr is None):
         #    return False
         #self.client_socket.send(json.dumps(message).encode(FORMAT))

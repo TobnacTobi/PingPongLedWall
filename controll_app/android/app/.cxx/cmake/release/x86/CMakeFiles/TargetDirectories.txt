@@ -1,0 +1,3 @@
+A:/OwnCloud/Privat/Projekte/PingPongLedWall/controll_app/android/app/.cxx/cmake/release/x86/CMakeFiles/rebuild_cache.dir
+A:/OwnCloud/Privat/Projekte/PingPongLedWall/controll_app/android/app/.cxx/cmake/release/x86/CMakeFiles/convertImage.dir
+A:/OwnCloud/Privat/Projekte/PingPongLedWall/controll_app/android/app/.cxx/cmake/release/x86/CMakeFiles/edit_cache.dir

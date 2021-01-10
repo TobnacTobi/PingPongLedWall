@@ -24,9 +24,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      //home: ConnectionPage(connection: connection),
+      home: ConnectionPage(connection: connection),
       //home: DrawModePage(connection: connection),
-      home: DefaultModePage(connection: connection),
+      //home: DefaultModePage(connection: connection),
       builder: EasyLoading.init(),
     );
   }

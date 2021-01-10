@@ -44,6 +44,8 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
   imagelib.Image img;
   Timer timer;
 
+  Socket _socket;
+
   final DynamicLibrary convertImageLib = Platform.isAndroid ?
     DynamicLibrary.open("libconvertImage.so") :
     DynamicLibrary.process();
@@ -70,27 +72,30 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
           ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           setState(() {
             enableSend = !enableSend;
           });
         },
-        child: Icon(enableSend?Icons.camera_alt:Icons.camera_alt_outlined, color: enableSend?Colors.green:Colors.red,),
+        child: Icon(enableSend ? Icons.camera_alt : Icons.camera_alt_outlined, color: enableSend ? Colors.green : Colors.red, ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
   void sendImage() {
-    if(!enableSend){
+    if (!enableSend) {
       return;
     }
-    Map < String, dynamic > settings = Map < String, dynamic > ();
+    if (!isConnected()) {
+      print('not connected!');
+      return;
+    }
 
     // Allocate memory for the 3 planes of the image
-    Pointer<Uint8> p = allocate(count: _savedImage.planes[0].bytes.length);
-    Pointer<Uint8> p1 = allocate(count: _savedImage.planes[1].bytes.length);
-    Pointer<Uint8> p2 = allocate(count: _savedImage.planes[2].bytes.length);
+    Pointer < Uint8 > p = allocate(count: _savedImage.planes[0].bytes.length);
+    Pointer < Uint8 > p1 = allocate(count: _savedImage.planes[1].bytes.length);
+    Pointer < Uint8 > p2 = allocate(count: _savedImage.planes[2].bytes.length);
 
     // Assign the planes data to the pointers of the image
     Uint8List pointerList = p.asTypedList(_savedImage.planes[0].bytes.length);
@@ -101,14 +106,14 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
     pointerList2.setRange(0, _savedImage.planes[2].bytes.length, _savedImage.planes[2].bytes);
 
     // Call the convertImage function and convert the YUV to RGB
-    Pointer<Uint32> imgP = conv(p, p1, p2, _savedImage.planes[1].bytesPerRow,
+    Pointer < Uint32 > imgP = conv(p, p1, p2, _savedImage.planes[1].bytesPerRow,
       _savedImage.planes[1].bytesPerPixel, _savedImage.width, _savedImage.height);
     // Get the pointer of the data returned from the function to a List
     List imgData = imgP.asTypedList((_savedImage.width * _savedImage.height));
 
     // Generate image from the converted data  
     img = imagelib.Image.fromBytes(_savedImage.height, _savedImage.width, imgData);
-    
+
     // Free the memory space allocated
     // from the planes and the converted data
     free(p);
@@ -118,9 +123,9 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
 
     img = imagelib.copyRotate(img, 90);
     img = imagelib.copyResize(img, height: height.floor(), width: width.floor());
-    settings['image'] = base64Encode(imagelib.encodeJpg(img));
 
-    widget.connection.sendModeSettings(settings);
+    List < int > msg = imagelib.encodeJpg(img, quality: 70);
+    _socket.add(msg);
   }
 
   void _initializeCamera() async {
@@ -142,7 +147,7 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
   }
 
   void _processCameraImage(CameraImage image) async {
-    if(!this.mounted){
+    if (!this.mounted) {
       _camera.stopImageStream();
       _camera.dispose();
       return;
@@ -150,6 +155,50 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
     setState(() {
       _savedImage = image;
     });
+  }
+
+
+  Future < bool > connect() async {
+    String address = widget.connection.address;
+    int port = 8943;
+    print('connecting VIDEO');
+    try {
+      await close();
+
+      _socket = await Socket.connect(address, port.toInt(), timeout: Duration(seconds: 1));
+      /*_socket.handleError((Object e){
+        print("An error occured. Redirecting to Connect-Screen.");
+        parent.connectionError();
+      }, test: (e)=>true);
+      _socket.listen((List<int> event) {
+        receiveMessage(utf8.decode(event));
+      });*/
+    } catch (e) {
+      print('Could not connect to VIDEO Websocket.');
+      return false;
+    }
+
+    return true;
+  }
+
+  Future < bool > close() async {
+    if (!isConnected()) {
+      return false;
+    }
+    print("closing VIDEO...");
+    await _socket.flush();
+    _socket.close();
+    _socket = null;
+    return true;
+  }
+
+  bool isConnected() {
+    if (_socket != null) {
+      bool done = false;
+      _socket.done.whenComplete(() => done = true);
+      return !done;
+    }
+    return false;
   }
 
 
@@ -174,30 +223,35 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+      DeviceOrientation.portraitUp,
+    ]);
     widget.connection.setParent(this);
     // Load the convertImage() function from the library
     conv = convertImageLib
       .lookup < NativeFunction < convert_func >> ('convertImage')
       .asFunction < Convert > ();
     _initializeCamera();
-    timer = new Timer.periodic(Duration(milliseconds: 250), (Timer t) => sendImage());
+    Timer(Duration(seconds: 1), 
+      (){
+        connect();
+        timer = new Timer.periodic(Duration(milliseconds: 50), (Timer t) => sendImage());
+      }
+    );
+    
     super.initState();
   }
   @override
   void dispose() {
     try {
       _camera.stopImageStream().then((value) => _camera.dispose());
-    } catch (e) {
-    }
+    } catch (e) {}
     SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeRight,
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  timer.cancel();
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    timer.cancel();
     super.dispose();
   }
 
