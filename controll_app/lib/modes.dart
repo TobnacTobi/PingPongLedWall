@@ -98,6 +98,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         });
         break;
       case 'breakout':
+      case "ship":
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BreakoutModePage(connection: widget.connection))).then((value){
           returnToThis(value);
         });
@@ -181,6 +182,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
       case "flappybird":
         return Icon(Icons.flight_takeoff);
       case "breakout":
+      case "ship":
         return Icon(Icons.code);
       case "video":
         return Icon(Icons.play_arrow);

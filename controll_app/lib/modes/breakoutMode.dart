@@ -25,7 +25,7 @@ class _BreakoutModePageState extends State<BreakoutModePage> implements Connecti
 
   @override
   Widget build(BuildContext context) {
-    return DefaultPage("Breakout", 
+    return DefaultPage("Slider-Control", 
       Column(
         children: [
           ControllerButtons(connection: widget.connection),

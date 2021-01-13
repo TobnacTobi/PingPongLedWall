@@ -22,6 +22,7 @@ from modes.fire import Fire
 from modes.rain import Rain
 from modes.twinkle import Twinkle
 from modes.breakout import Breakout
+from modes.ship import Ship
 from modes.flappybird import FlappyBird
 from modes.off import Off
 from displays.display import Display
@@ -52,7 +53,8 @@ class Main:
         # self.setMode(Off(self, self.display))
         # self.setMode(ClockAnalog(self, self.display))
         # self.setMode(Rain(self, self.display))
-        self.setMode(Twinkle(self, self.display))
+        # self.setMode(Twinkle(self, self.display))
+        self.setMode(Ship(self, self.display))
 
     def run(self):
         while(True):
@@ -116,6 +118,8 @@ class Main:
             modeInstance = Twinkle(self, self.display)
         elif(mode == 'breakout'):
             modeInstance = Breakout(self, self.display)
+        elif(mode == 'ship'):
+            modeInstance = Ship(self, self.display)
         elif(mode == 'flappybird'):
             modeInstance = FlappyBird(self, self.display)
         elif(mode == 'off'):

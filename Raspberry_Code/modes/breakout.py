@@ -181,7 +181,7 @@ class Breakout(Mode):
         if(self.backgroundstyle == 'rainbow'):
             xpos = time.time()*0.01%1
             size = 20/self.size
-            r, g, b = color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 0.3)
+            r, g, b = color_convert.HSVtoRGB((xpos + size*(x+y)/(self.display.width+self.display.height)/2) % 1.0, 1, 0.1)
         return (r, g, b)
 
 
