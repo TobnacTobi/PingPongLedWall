@@ -40,7 +40,7 @@ class Fire(Mode):
                 self.display.drawPixel(x, y, self.colors[self.color][round(self.board[y][x])])
 
     def calc(self, step = 0):
-        if(step % math.floor(50/self.speed) != 0):
+        if(step % max(1, math.floor(50/self.speed)) != 0):
             return
         for y in range(len(self.board)-1):
             for x in range(len(self.board[0])):
