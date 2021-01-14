@@ -236,7 +236,7 @@ class Colors(Mode):
                 size = 10/self.size
                 self.changeRequest = False
             for i in range(width*height):
-                self.display.drawPixel(math.floor(random()*width), math.floor(random()*height), color_convert.HSVtoRGB(random(), 1, 1))
+                self.display.drawPixel(math.floor(random()*width), math.floor(random()*height), color_convert.HSVtoRGB(random(), random(), random()))
                 if(i % self.speed == 0):
                     lasttime = self.wait(lasttime)
                 timepast += (1/FrameRate)
