@@ -25,6 +25,7 @@ from modes.breakout import Breakout
 from modes.ship import Ship
 from modes.flappybird import FlappyBird
 from modes.off import Off
+from modes.iota import IOTA
 from displays.display import Display
 from connection import Connection
 
@@ -54,7 +55,8 @@ class Main:
         # self.setMode(ClockAnalog(self, self.display))
         # self.setMode(Rain(self, self.display))
         # self.setMode(Twinkle(self, self.display))
-        self.setMode(Ship(self, self.display))
+        # self.setMode(Ship(self, self.display))
+        self.setMode(IOTA(self, self.display))
 
     def run(self):
         while(True):
@@ -124,6 +126,8 @@ class Main:
             modeInstance = FlappyBird(self, self.display)
         elif(mode == 'off'):
             modeInstance = Off(self, self.display)
+        elif(mode == 'iota'):
+            modeInstance = IOTA(self, self.display)
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)
