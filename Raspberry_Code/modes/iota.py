@@ -41,13 +41,15 @@ class IOTA(Mode):
         #    self.displayText(textarr, 0)
         #    return
         framecount = 0
+        i = 0
         seconds = 0
         lasttime = None
         xpos = 0
         while(not self.changeRequest and not self.stop and seconds < 30):
             lasttime = self.wait(lasttime)
             framecount+=1
-            if(framecount%20 == 0):
+            i+=1
+            if(i%FrameRate == 0):
                 seconds += 1
             if(framecount > 30/self.speed):
                 framecount = 0
