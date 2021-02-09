@@ -44,18 +44,16 @@ class IOTA(Mode):
         seconds = 0
         lasttime = None
         xpos = 0
-        while(not self.changeRequest and not self.stop):
+        while(not self.changeRequest and not self.stop and seconds < 30):
             lasttime = self.wait(lasttime)
             framecount+=1
             if(framecount%20 == 0):
                 seconds += 1
-            self.brightness = max(self.brightness - 0.02, 0.3)
             if(framecount > 30/self.speed):
                 framecount = 0
                 xpos+=1
                 self.displayText(textarr, xpos)
-            if(seconds > 30):
-                break
+            self.brightness = max(self.brightness - 0.02, 0.3)
 
     def displayText(self, textarr, xpos):
         displayWidth = self.display.width
@@ -135,6 +133,7 @@ class IOTA(Mode):
 
         # Take out the <div> of name and get its value
         div = soup.find('div', {"class": "priceValue___11gHJ"})
+        print('New price retrieved: '+div.contents[0])
         return div.contents[0]
 
     def wait(self, lasttime=None):
