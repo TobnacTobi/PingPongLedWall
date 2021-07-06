@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'dart:typed_data';
 
 const int header = 64;
@@ -17,6 +18,11 @@ class Connection {
 
   String address;
   num port;
+
+  // Variables for timer to turn LEDWALL off
+  int timerSeconds = 10;
+  Timer timer;
+  String timerText = 'No timer is set.';
 
   Future<bool> connect(String address, num port) async {
     if(address == null || address.length == 0){
@@ -168,10 +174,13 @@ class Connection {
   }
 
 
-  receiveMessage(dynamic m){
+  receiveMessage(dynamic m) async {
     Map<String, dynamic> msg = json.decode(m);
     switch (msg['type']) {
       case "WELCOME":
+        var prefs = await SharedPreferences.getInstance();
+        Map<String, dynamic> settings = {'size':prefs.getInt('size')??10, 'speed': prefs.getInt('speed')??10, 'brightness': prefs.getInt('brightness')??50};
+        await this.sendSettings(settings);
         connection_number = int.parse(msg['data']);
         parent.receiveWelcome(msg);
         break;

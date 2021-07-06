@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -113,7 +116,46 @@ class _SettingsPageState extends State < SettingsPage > implements ConnectionInt
               onPressed: sendDisconnect,
               child: Text('Disconnect'),
             )),
-          Text("Connection Nr: "+widget.connection.connection_number.toString())
+          Text("Connection Nr: "+widget.connection.connection_number.toString()),
+          Row(children: [
+            IconButton(icon: Icon(Icons.timer), onPressed: (){
+              setState(() {
+                widget.connection.timerSeconds = 60*30;
+                widget.connection.timer.cancel();
+                widget.connection.timerText = 'No timer is set.';
+              });
+            }),
+            Text(' Timer: '),
+            Expanded(child: CupertinoTimerPicker(
+              mode: CupertinoTimerPickerMode.hms,
+              onTimerDurationChanged: (value){
+                setState(() {
+                  widget.connection.timerSeconds = value.inSeconds;
+                });
+              }
+            ),),
+          IconButton(icon: Icon(Icons.send), onPressed: (){
+            setState(() {
+              widget.connection.timerText = 'The LEDWALL will turn OFF in ' + widget.connection.timerSeconds.toString() + ' seconds. ['+Duration(seconds: widget.connection.timerSeconds).toString()+']';
+              widget.connection.timer = new Timer.periodic(new Duration(seconds: 1), (timer) {
+                widget.connection.timerSeconds--;
+                widget.connection.timerText = 'The LEDWALL will turn OFF in ' + widget.connection.timerSeconds.toString() + ' seconds. ['+Duration(seconds: widget.connection.timerSeconds).toString()+']';
+                if(widget.connection.timerSeconds <= 0){
+                  timer.cancel();
+                  widget.connection.sendMode("off");
+                  widget.connection.timerSeconds = 10;
+                  widget.connection.timerText = 'The LEDWALL was turned OFF.';
+                }
+                if(mounted){
+                  setState(() {
+                    return;
+                  });
+                }
+              });
+            });
+          })
+          ],),
+          Text(widget.connection.timerText),
         ],
       ),
       widget.connection,
@@ -158,6 +200,15 @@ class _SettingsPageState extends State < SettingsPage > implements ConnectionInt
     //widget.connection.setParent(this);
     loadDefaults();
     super.initState();
+    if(widget.connection.timer?.isActive??false){
+      new Timer.periodic(new Duration(seconds: 1), (timer) {
+        if(mounted){
+          setState(() {
+            return;
+          });
+        }
+      });
+    }
   }
   void loadDefaults() async {
     prefs = await SharedPreferences.getInstance();

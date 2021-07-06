@@ -1,4 +1,4 @@
-#made with following function:
+# Create the LED-Connection Order with the following function:
 i = 0
 for y in range(14, -1, -1):
     for x in range (0,20):

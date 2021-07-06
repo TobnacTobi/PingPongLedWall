@@ -83,13 +83,13 @@ class _TextModePageState extends State < TextModePage > implements ConnectionInt
             child: Row(children: [
               SizedBox(width: 15),
               RaisedButton(onPressed: (){
-                showDialog(context: context, child: getAlertDialog(type: 'text', number: 0));
+                showDialog(context: context, builder: (_) => getAlertDialog(type: 'text', number: 0));
               }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),), color: _textColor0,),
               SizedBox(width: 30),
               Visibility(
                 visible: _showTextColor && _textStyle.startsWith('fade'),
                 child: RaisedButton(onPressed: (){
-                showDialog(context: context, child: getAlertDialog(type: 'text', number: 1));
+                showDialog(context: context, builder: (_) => getAlertDialog(type: 'text', number: 1));
               }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),),color: _textColor1),
               ),
             ], )
@@ -122,13 +122,13 @@ class _TextModePageState extends State < TextModePage > implements ConnectionInt
             child: Row(children: [
               SizedBox(width: 15),
               RaisedButton(onPressed: (){
-                showDialog(context: context, child: getAlertDialog(type: 'background', number: 0));
+                showDialog(context: context, builder: (_) => getAlertDialog(type: 'background', number: 0));
               }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),),color: _backgroundColor0),
               SizedBox(width: 30),
               Visibility(
                 visible: _showBackgroundColor && _backgroundStyle.startsWith('fade'),
                 child: RaisedButton(onPressed: (){
-                showDialog(context: context, child: getAlertDialog(type: 'background', number: 1));
+                showDialog(context: context, builder: (_) => getAlertDialog(type: 'background', number: 1));
               }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),),color: _backgroundColor1),
               ),
             ], )

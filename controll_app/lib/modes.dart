@@ -186,6 +186,8 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         return Icon(Icons.code);
       case "video":
         return Icon(Icons.play_arrow);
+      case "timer":
+        return Icon(Icons.timer);
       default:
         return Icon(Icons.star);
     }

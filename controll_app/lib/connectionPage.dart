@@ -143,6 +143,7 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
     loadDefaults();
     widget.connection.setParent(this);
     super.initState();
+    this.connect();
   }
 
   

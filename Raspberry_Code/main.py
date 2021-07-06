@@ -55,10 +55,10 @@ class Main:
         # self.setMode(Off(self, self.display))
         # self.setMode(ClockAnalog(self, self.display))
         # self.setMode(Rain(self, self.display))
-        self.setMode(Twinkle(self, self.display))
+        # self.setMode(Twinkle(self, self.display))
         # self.setMode(Ship(self, self.display))
         # self.setMode(IOTA(self, self.display))
-        # self.setMode(Timer(self, self.display))        
+        self.setMode(Timer(self, self.display))        
 
     def run(self):
         while(True):
@@ -130,6 +130,8 @@ class Main:
             modeInstance = Off(self, self.display)
         elif(mode == 'iota'):
             modeInstance = IOTA(self, self.display)
+        elif(mode == 'timer'):
+            modeInstance = Timer(self, self.display)
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)

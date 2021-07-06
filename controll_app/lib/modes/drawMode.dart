@@ -100,7 +100,7 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
 
           Row(children: [
             RaisedButton(onPressed: () {
-              showDialog(context: context, child: getAlertDialog());
+              showDialog(context: context, builder: (_) => getAlertDialog());
             }, child: Text('Color', style: TextStyle(color: Colors.black), ), color: _selectedColor, ),
             SizedBox(width: 10),
             DropdownButton(items: [

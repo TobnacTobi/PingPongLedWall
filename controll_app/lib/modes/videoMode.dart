@@ -3,10 +3,10 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:image/image.dart'
-as imagelib;
+import 'package:image/image.dart' as imagelib;
 import 'package:camera/camera.dart';
-import 'package:ffi/ffi.dart';
+import 'dart:ffi' as dartffi;
+import 'package:ffi/ffi.dart' as ffi;
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -18,8 +18,37 @@ import '../settings.dart';
 import '../widgets/page.dart';
 import 'package:flutter/services.dart';
 
+final DynamicLibrary stdlib = Platform.isWindows
+    ? DynamicLibrary.open('kernel32.dll')
+    : DynamicLibrary.process();
+typedef PosixMallocNative = Pointer Function(IntPtr);
+typedef PosixMalloc = Pointer Function(int);
+final PosixMalloc posixMalloc =
+    stdlib.lookupFunction<PosixMallocNative, PosixMalloc>('malloc');
+    typedef PosixFreeNative = Void Function(Pointer);
+typedef PosixFree = void Function(Pointer);
+final PosixFree posixFree =
+    stdlib.lookupFunction<PosixFreeNative, PosixFree>('free');
+
+typedef PosixCallocNative = Pointer Function(IntPtr num, IntPtr size);
+typedef PosixCalloc = Pointer Function(int num, int size);
+final PosixCalloc posixCalloc =
+    stdlib.lookupFunction<PosixCallocNative, PosixCalloc>('calloc');
 typedef convert_func = Pointer < Uint32 > Function(Pointer < Uint8 > , Pointer < Uint8 > , Pointer < Uint8 > , Int32, Int32, Int32, Int32);
 typedef Convert = Pointer < Uint32 > Function(Pointer < Uint8 > , Pointer < Uint8 > , Pointer < Uint8 > , int, int, int, int);
+typedef WinHeapAllocNative = Pointer Function(Pointer, Uint32, IntPtr);
+typedef WinHeapAlloc = Pointer Function(Pointer, int, int);
+final WinHeapAlloc winHeapAlloc = stdlib.lookupFunction<WinHeapAllocNative, WinHeapAlloc>('HeapAlloc');
+typedef WinHeapFreeNative = Int32 Function(
+    Pointer heap, Uint32 flags, Pointer memory);
+typedef WinHeapFree = int Function(Pointer heap, int flags, Pointer memory);
+final WinHeapFree winHeapFree =
+    stdlib.lookupFunction<WinHeapFreeNative, WinHeapFree>('HeapFree');
+
+typedef WinGetProcessHeapFn = Pointer Function();
+final WinGetProcessHeapFn winGetProcessHeap = stdlib
+    .lookupFunction<WinGetProcessHeapFn, WinGetProcessHeapFn>('GetProcessHeap');
+final Pointer processHeap = winGetProcessHeap();
 
 class VideoModePage extends StatefulWidget {
   final Connection connection;
@@ -36,6 +65,8 @@ class VideoModePage extends StatefulWidget {
 class _VideoModePageState extends State < VideoModePage > implements ConnectionInterface {
   double width = 20;
   double height = 15;
+
+  Allocator allocator;
 
   CameraController _camera;
   bool enableSend = false;
@@ -93,9 +124,9 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
     }
 
     // Allocate memory for the 3 planes of the image
-    Pointer < Uint8 > p = allocate(count: _savedImage.planes[0].bytes.length);
-    Pointer < Uint8 > p1 = allocate(count: _savedImage.planes[1].bytes.length);
-    Pointer < Uint8 > p2 = allocate(count: _savedImage.planes[2].bytes.length);
+    Pointer < Uint8 > p = allocator.allocate(_savedImage.planes[0].bytes.length);
+    Pointer < Uint8 > p1 = allocator.allocate(_savedImage.planes[1].bytes.length);
+    Pointer < Uint8 > p2 = allocator.allocate(_savedImage.planes[2].bytes.length);
 
     // Assign the planes data to the pointers of the image
     Uint8List pointerList = p.asTypedList(_savedImage.planes[0].bytes.length);
@@ -116,10 +147,10 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
 
     // Free the memory space allocated
     // from the planes and the converted data
-    free(p);
-    free(p1);
-    free(p2);
-    free(imgP);
+    allocator.free(p);
+    allocator.free(p1);
+    allocator.free(p2);
+    allocator.free(imgP);
 
     img = imagelib.copyRotate(img, 90);
     img = imagelib.copyResize(img, height: height.floor(), width: width.floor());
@@ -222,6 +253,7 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
 
   @override
   void initState() {
+    allocator = new _MallocAllocator();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -256,4 +288,54 @@ class _VideoModePageState extends State < VideoModePage > implements ConnectionI
   }
 
 
+}
+
+
+
+class _MallocAllocator implements Allocator {
+  const _MallocAllocator();
+
+  /// Allocates [byteCount] bytes of of unitialized memory on the native heap.
+  ///
+  /// For POSIX-based systems, this uses `malloc`. On Windows, it uses
+  /// `HeapAlloc` against the default public heap.
+  ///
+  /// Throws an [ArgumentError] if the number of bytes or alignment cannot be
+  /// satisfied.
+  // TODO: Stop ignoring alignment if it's large, for example for SSE data.
+  @override
+  Pointer<T> allocate<T extends NativeType>(int byteCount, {int alignment}) {
+    Pointer<T> result;
+    if (Platform.isWindows) {
+      result = winHeapAlloc(processHeap, /*flags=*/ 0, byteCount).cast();
+    } else {
+      result = posixMalloc(byteCount).cast();
+    }
+    if (result.address == 0) {
+      throw ArgumentError('Could not allocate $byteCount bytes.');
+    }
+    return result;
+  }
+
+  /// Releases memory allocated on the native heap.
+  ///
+  /// For POSIX-based systems, this uses `free`. On Windows, it uses `HeapFree`
+  /// against the default public heap. It may only be used against pointers
+  /// allocated in a manner equivalent to [allocate].
+  ///
+  /// Throws an [ArgumentError] if the memory pointed to by [pointer] cannot be
+  /// freed.
+  ///
+  // TODO(dartbug.com/36855): Once we have a ffi.Bool type we can use it instead
+  // of testing the return integer to be non-zero.
+  @override
+  void free(Pointer pointer) {
+    if (Platform.isWindows) {
+      if (winHeapFree(processHeap, /*flags=*/ 0, pointer) == 0) {
+        throw ArgumentError('Could not free $pointer.');
+      }
+    } else {
+      posixFree(pointer);
+    }
+  }
 }

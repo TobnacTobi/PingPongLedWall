@@ -32,29 +32,27 @@ class Timer(Mode):
         self.ypos = math.floor((self.display.height)/2)
         lasttimestr = str(datetime.datetime.now().time())
         while(not self.stop):
-            if(state == "set"):
-                self.getTextMatrix()
-                self.showClock()
-            elif(state == "run"):
+            self.separatoropacity = (math.sin(time.time()*math.pi)+1)/2
+            self.timerFraction = time.time() % (self.display.width * self.display.height)
+            self.getTextMatrix()
+            self.showClock()
+            if(self.state == "run"):
                 timestr = str(datetime.datetime.now().time())
                 seconds = timestr[6:8]
                 lastseconds = lasttimestr[6:8]
                 if(seconds != lastseconds):
                     self.tic()
-                if(self.minutes == 0):
-                    state = mode
+                if(self.minutes == 0 and self.seconds == 0):
+                    self.state = self.mode
                     continue
                 lasttimestr = timestr
-                self.separatoropacity = (math.sin(time.time()*math.pi)+1)/2
-                self.secondsFraction = time.time() % (self.display.width * self.display.height)
-                self.getTextMatrix()
-                self.showClock()
-            elif(state == "off"):
+            elif(self.state == "off"):
                 lasttime = None
                 self.display.clear()
                 while(not self.stop):
                     time.sleep(1)
-            elif(state == "alarm"):
+            elif(self.state == "alarm"):
+                self.display.setBrightness(((math.sin(time.time()*math.pi*4)+1)/2)*100)
                 # make alarm
                 pass
     
@@ -180,16 +178,16 @@ class Timer(Mode):
         # count seconds with pixels:
         if(self.countSeconds):
             d = (self.display.width * self.display.height)
-            p = ((y * self.display.width + x - self.secondsFraction - 150) % d) / d
+            p = ((y * self.display.width + x - self.timerFraction - 150) % d) / d
             if( p >= (1-1/d)):
-                s = self.secondsFraction % 1
-                r = math.floor(r * (self.secondCountBrightness + (s*(1-self.secondCountBrightness))))
-                g = math.floor(g * (self.secondCountBrightness + (s*(1-self.secondCountBrightness))))
-                b = math.floor(b * (self.secondCountBrightness + (s*(1-self.secondCountBrightness))))
+                s = self.timerFraction % 1
+                r = math.floor(r * (self.timerCountBrightness + (s*(1-self.timerCountBrightness))))
+                g = math.floor(g * (self.timerCountBrightness + (s*(1-self.timerCountBrightness))))
+                b = math.floor(b * (self.timerCountBrightness + (s*(1-self.timerCountBrightness))))
             else:
-                r = math.floor(r * (self.secondCountBrightness + (p*(1-self.secondCountBrightness))))
-                g = math.floor(g * (self.secondCountBrightness + (p*(1-self.secondCountBrightness))))
-                b = math.floor(b * (self.secondCountBrightness + (p*(1-self.secondCountBrightness))))
+                r = math.floor(r * (self.timerCountBrightness + (p*(1-self.timerCountBrightness))))
+                g = math.floor(g * (self.timerCountBrightness + (p*(1-self.timerCountBrightness))))
+                b = math.floor(b * (self.timerCountBrightness + (p*(1-self.timerCountBrightness))))
         return (r, g, b)
 
     def wait(self, lasttime=None):
@@ -203,19 +201,22 @@ class Timer(Mode):
         return currtime
     
     def handleDirection(self, direction, connection = 0):
-        if(direction == "up"):
+        if(direction == "UP"):
             self.incTimer()
-        elif(direction == "down"):
+        elif(direction == "DOWN"):
             self.decTimer()
-        elif(state == "set" and (direction == "left" or direction == "right")):
-            if(mode == "alarm"):
-                mode = "off"
-            elif(mode == "off"):
-                mode = "alarm"
+        elif(self.state == "set" and (direction == "LEFT" or direction == "RIGHT")):
+            if(self.mode == "alarm"):
+                self.mode = "off"
+                self.textcolor0 = (0, 0, 0, 255)
+            elif(self.mode == "off"):
+                self.mode = "alarm"
+                self.textcolor0 = (255, 255, 255, 255)
         self.changeRequest = True
     
     def handleConfirm(self, connection = 0):
-        self.changeRequest = True
+        if(self.state == "set"):
+            self.state = "run"
 
     def handleReturn(self):
         self.changeRequest = True
