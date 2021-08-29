@@ -25,9 +25,12 @@ class IOTA(Mode):
         while(not self.stop):
             tmp = self.price
             self.price = self.getData()
-            if(float(self.price[1:]) >= float(tmp[1:])):
+            if(float(self.price[1:]) > float(tmp[1:])):
                 self.backgroundcolor0 = (0, 255, 119, 255)
                 self.backgroundcolor1 = (106, 255, 0, 255)
+            elif(float(self.price[1:]) == float(tmp[1:])):
+                self.backgroundcolor0 = (0, 0, 0, 255)
+                self.backgroundcolor1 = (30, 30, 30, 255)
             else:
                 self.backgroundcolor0 = (255, 255, 0, 255)
                 self.backgroundcolor1 = (255, 115, 0, 255)
@@ -134,7 +137,7 @@ class IOTA(Mode):
         soup = BeautifulSoup(page, 'html.parser')
 
         # Take out the <div> of name and get its value
-        div = soup.find('div', {"class": "priceValue___11gHJ"})
+        div = soup.find('div', {"class": "priceValue"})
         print('New price retrieved: '+div.contents[0])
         return div.contents[0]
 

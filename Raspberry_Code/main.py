@@ -1,6 +1,9 @@
+#! /bin/env python3
 import time, threading
 from os import listdir
+from os import execv
 from os.path import isfile, join
+import sys
 
 from modes.mode import Mode
 from modes.colors import Colors
@@ -55,10 +58,10 @@ class Main:
         # self.setMode(Off(self, self.display))
         # self.setMode(ClockAnalog(self, self.display))
         # self.setMode(Rain(self, self.display))
-        # self.setMode(Twinkle(self, self.display))
+        self.setMode(Twinkle(self, self.display))
         # self.setMode(Ship(self, self.display))
         # self.setMode(IOTA(self, self.display))
-        self.setMode(Timer(self, self.display))        
+        # self.setMode(Timer(self, self.display))        
 
     def run(self):
         while(True):
@@ -126,12 +129,15 @@ class Main:
             modeInstance = Ship(self, self.display)
         elif(mode == 'flappybird'):
             modeInstance = FlappyBird(self, self.display)
-        elif(mode == 'off'):
-            modeInstance = Off(self, self.display)
         elif(mode == 'iota'):
             modeInstance = IOTA(self, self.display)
         elif(mode == 'timer'):
             modeInstance = Timer(self, self.display)
+        elif(mode == 'off'):
+            modeInstance = Off(self, self.display)
+        elif(mode == 'restart'):
+            execv(__file__, sys.argv)
+            exit()
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)
