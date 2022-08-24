@@ -119,8 +119,8 @@ class Colors(Mode):
                 speed = self.speed*0.0002
                 size = 5/self.size
                 self.changeRequest = False
-            posx = max(0, min(posx + (movement.noise2d(0, i/500))*speed, self.display.width))
-            posy = max(0, min(posy + (movement.noise2d(300, i/500))*speed, self.display.height))
+            posx = max(0, min(posx + (movement.noise2(0, i/500))*speed, self.display.width))
+            posy = max(0, min(posy + (movement.noise2(300, i/500))*speed, self.display.height))
             for x in range(width):
                 for y in range(height):
                     distance = math.sqrt((x-posx)*(x-posx) + (y-posy)*(y-posy))
@@ -206,14 +206,14 @@ class Colors(Mode):
                 size = 10/self.size
                 self.changeRequest = False
 
-            posx += (movement.noise2d(0, i/500))*self.speed*0.01   # for noise brightness
-            posy += (movement.noise2d(300, i/500))*self.speed*0.01 # for noise brightness
-            zoom = (movement.noise2d(1000, i/300) + 1.1) * 1.3     # for noise brightness
+            posx += (movement.noise2(0, i/500))*self.speed*0.01   # for noise brightness
+            posy += (movement.noise2(300, i/500))*self.speed*0.01 # for noise brightness
+            zoom = (movement.noise2(1000, i/300) + 1.1) * 1.3     # for noise brightness
             i+=1                                                   # for noise brightness
             
             for x in range(width):
                 for y in range(height):
-                    output = ((tmp.noise2d(((x-self.display.width)*zoom + posx)/10, ((y-self.display.height)*zoom + posy)/10) + 1) / 2) ** 2 # noise brightness
+                    output = ((tmp.noise2(((x-self.display.width)*zoom + posx)/10, ((y-self.display.height)*zoom + posy)/10) + 1) / 2) ** 2 # noise brightness
                     self.display.drawPixel(x, y, color_convert.HSVtoRGB((start_color_hue_angle + (math.sin(angle) * size*(height/2-y) + math.cos(angle) * size*(width/2-x))/(width+height)) % 1.0, 1, 0.1 + 0.9*output))
                     # self.display.drawPixel(x, y, color_convert.HSVtoRGB((start_color_hue_angle + (math.sin(angle) * size*(height/2-y) + math.cos(angle) * size*(width/2-x))/(width+height)) % 1.0, 1, 1))
             start_color_hue_angle+=speed
@@ -280,13 +280,13 @@ class Colors(Mode):
             if(self.changeRequest):
                 speed = self.speed*0.01
                 self.changeRequest = False
-            posx += (movement.noise2d(0, i/500))*speed
-            posy += (movement.noise2d(300, i/500))*speed
-            zoom = (movement.noise2d(1000, i/300) + 1.1) * 1.3
+            posx += (movement.noise2(0, i/500))*speed
+            posy += (movement.noise2(300, i/500))*speed
+            zoom = (movement.noise2(1000, i/300) + 1.1) * 1.3
             i += 1
             for x in range(self.display.width):
                 for y in range(self.display.height):
-                    output = ((tmp.noise2d(((x-self.display.width)*zoom + posx)/10, ((y-self.display.height)*zoom + posy)/10) + 1) / 2) ** 2
+                    output = ((tmp.noise2(((x-self.display.width)*zoom + posx)/10, ((y-self.display.height)*zoom + posy)/10) + 1) / 2) ** 2
                     self.display.drawPixel(x, y, color_convert.HSVtoRGB(output, 1, 1))
             lasttime = self.wait(lasttime)
             timepast += 1/FrameRate

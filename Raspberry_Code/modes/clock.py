@@ -1,5 +1,5 @@
 from .mode import Mode
-import time, threading
+import os, time, threading
 import datetime
 from displays import color_convert
 from displays import texts
@@ -27,6 +27,9 @@ class Clock(Mode):
     backgroundcolor0 = (0, 0, 0, 255)
     backgroundcolor1 = (0, 0, 0, 255)
     
+    os.environ['TZ'] = 'Europe/Berlin'
+    time.tzset()
+
     def run(self):
         self.xpos = math.floor((self.display.width)/2)
         self.ypos = math.floor((self.display.height)/2)
