@@ -62,6 +62,7 @@ class Main:
         # self.setMode(Ship(self, self.display))
         # self.setMode(IOTA(self, self.display))
         # self.setMode(Timer(self, self.display))        
+        self.lastMode = 'twinkle'
 
     def run(self):
         while(True):
@@ -141,6 +142,8 @@ class Main:
         else:
             modeInstance = Colors(self, self.display)
         self.setMode(modeInstance)
+        if(mode != 'off' and mode != 'restart'):
+            self.lastMode = mode
     
     def getModes(self):
         return [f[:-3] for f in listdir("./Raspberry_Code/modes/") if isfile(join("./Raspberry_Code/modes/", f))] # print file names in modes without '.py'

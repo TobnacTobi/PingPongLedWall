@@ -2,6 +2,10 @@ import time, threading
 import json
 import socket
 import sys
+#tuya control:
+import configparser
+from tuyalinksdk.client import TuyaClient
+from tuyalinksdk.console_qrcode import qrcode_generate
 
 HEADER = 64
 FORMAT = "utf-8"
@@ -16,7 +20,7 @@ class Connection(threading.Thread):
         self.parent = p
         self.setDaemon(True)
         self.message = {"type": "WELCOME", "data": "", "comment": ""}
-
+        
     def run(self):
         print("[STARTING] Server is starting")
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,6 +28,26 @@ class Connection(threading.Thread):
         server_socket.bind(("0.0.0.0", 8942))
         print("[OPEN] Server is accessible under: " + str(server_socket.getsockname()))
         server_socket.listen(2)
+        
+        #initialize tuya service:
+        config = configparser.ConfigParser()
+        config.read('config')
+        
+        tuyaconfig = config['tuya']
+        pid = tuyaconfig['productid']
+        uuid = tuyaconfig['uuid']
+        ak = tuyaconfig['authkey']
+        
+        self.tuyaClient = TuyaClient(productid=pid, uuid=uuid, authkey=ak)
+        self.tuyaClient.on_connected = self.onConnected
+        self.tuyaClient.on_qrcode = self.onQRCode
+        self.tuyaClient.on_reset = self.onReset
+        self.tuyaClient.on_dps = self.onDataPointSet
+        self.tuyaClient.connect()
+        self.tuyaClient.loop_start()
+        self.tuyaClient.push_dps({'101': True})
+
+        #runloop:
         while(True):
             (client_socket, addr) = server_socket.accept()
             thread = threading.Thread(target=self.handleClient, args=(client_socket, addr))
@@ -119,4 +143,45 @@ class Connection(threading.Thread):
         #    return False
         #self.client_socket.send(json.dumps(message).encode(FORMAT))
 
-    
+    ##Tuya Control Handle Functions:
+    def onConnected(self):
+        print('Tuya Control Connected')
+
+    def onQRCode(self, url):
+        qrcode_generate(url)
+
+    def onReset(self, data):
+        print('Tuya Reset:', data)
+
+    def onDataPointSet(self, dps):
+        print('DataPoints: ',dps)
+        #functions...
+
+        #ON/OFF
+        if('101' in dps): #'1' is part of google home
+            if(dps['101']):
+                self.parent.setModeByName(self.parent.lastMode)
+            else:
+                self.parent.setModeByName('off')
+        if('1' in dps): #'1' is part of google home
+            if(dps['1']):
+                self.parent.setModeByName(self.parent.lastMode)
+            else:
+                self.parent.setModeByName('off')
+        #Brightness
+        elif('102' in dps):
+            self.parent.display.setBrightness(dps['102'])
+        #Mode
+        elif('103' in dps):
+            self.parent.setModeByName(dps['103'])
+        #Speed
+        elif('104' in dps):
+            self.parent.current_mode.handleSetting({'speed': dps['104'], 'size': self.parent.current_mode.size})
+        #Size
+        elif('106' in dps):
+            self.parent.current_mode.handleSetting({'speed': self.parent.current_mode.size, 'size': dps['106']})
+        #Button
+        elif('105' in dps):
+                self.parent.current_mode.handleConfirm()
+
+        self.tuyaClient.push_dps(dps)
