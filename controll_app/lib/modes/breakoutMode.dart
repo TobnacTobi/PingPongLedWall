@@ -10,7 +10,7 @@ import '../widgets/page.dart';
 class BreakoutModePage extends StatefulWidget {
   final Connection connection;
 
-  BreakoutModePage({Key key, @required this.connection})
+  BreakoutModePage({Key? key, required this.connection})
       : super(key: key);
 
   @override
@@ -18,10 +18,10 @@ class BreakoutModePage extends StatefulWidget {
 }
 
 class _BreakoutModePageState extends State<BreakoutModePage> implements ConnectionInterface{
-  List<String> received = new List<String>();
+  List<String> received = List<String>.empty(growable: true);
   double slidervalue = 50;
   int platformposition = 50;
-  SharedPreferences prefs;
+  SharedPreferences? prefs;
 
   @override
   Widget build(BuildContext context) {

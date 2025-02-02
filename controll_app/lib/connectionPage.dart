@@ -12,7 +12,7 @@ class ConnectionPage extends StatefulWidget {
   final String title = 'LED Wall Control';
   final Connection connection;
 
-  ConnectionPage({Key key, @required this.connection})
+  ConnectionPage({Key? key, required this.connection})
       : super(key: key);
 
   @override
@@ -22,8 +22,8 @@ class ConnectionPage extends StatefulWidget {
 class _ConnectionPageState extends State<ConnectionPage> implements ConnectionInterface{
   TextEditingController _addressController = TextEditingController();
   TextEditingController _portController = TextEditingController();
-  List<String> received = new List<String>();
-  SharedPreferences prefs;
+  List<String> received = List<String>.empty(growable: true);
+  late SharedPreferences prefs;
   bool loading = false;
 
   @override
@@ -56,7 +56,7 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
             ),
             SizedBox(height: 10),
             SizedBox(width: double.infinity,
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: connect,
               child: Text('Connect'),
             )),
@@ -101,9 +101,9 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
   void connect() async {
     EasyLoading.show(status: 'loading...');
 
-    int port;
+    int? port;
     try {
-      port = num.parse(_portController.text);
+      port = num.parse(_portController.text) as int?;
     } catch (e) {
       //print('Could not parse port to num.');
     }
@@ -122,7 +122,7 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
 
   void receiveModes(Map<String, dynamic> message){
     print(message);
-    List<String> modes = List<String>();
+    List<String> modes = List<String>.empty(growable: true);
     for (var item in message['data']) {
       modes.add(item.toString());
     }
@@ -143,14 +143,14 @@ class _ConnectionPageState extends State<ConnectionPage> implements ConnectionIn
     loadDefaults();
     widget.connection.setParent(this);
     super.initState();
-    this.connect();
+    //this.connect();
   }
 
   
   void loadDefaults() async {
     prefs = await SharedPreferences.getInstance();
-    _addressController.text = prefs.getString('address');
-    _portController.text = prefs.getString('port');
+    _addressController.text = prefs.getString('address')!;
+    _portController.text = prefs.getString('port')!;
   }
 
   @override

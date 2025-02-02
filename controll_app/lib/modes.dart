@@ -20,7 +20,7 @@ class ModesPage extends StatefulWidget {
   final Connection connection;
   List<String> modes;
 
-  ModesPage({Key key, @required this.connection, @required this.modes})
+  ModesPage({Key? key, required this.connection, required this.modes})
       : super(key: key);
 
   @override
@@ -28,8 +28,8 @@ class ModesPage extends StatefulWidget {
 }
 
 class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
-  List<String> received = new List<String>();
-  SharedPreferences prefs;
+  List<String> received = List<String>.empty(growable: true);
+  SharedPreferences? prefs;
   bool loading = false;
 
   @override
@@ -53,7 +53,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
     setMode(message['data']);
   }
 
-  void setMode(String mode){
+  void setMode(String? mode){
     Navigator.of(context).popUntil((route) => route.isFirst);
     switch (mode) {
       case "clockanalog":
@@ -82,7 +82,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
           returnToThis(value);
         });
         break;
-      case "image":
+      /*case "image":
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ImageModePage(connection: widget.connection))).then((value){
           returnToThis(value);
         });
@@ -96,7 +96,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SoundModePage(connection: widget.connection))).then((value){
           returnToThis(value);
         });
-        break;
+        break;*/
       case 'breakout':
       case "ship":
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BreakoutModePage(connection: widget.connection))).then((value){
@@ -110,7 +110,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
     }
   }
 
-  void returnToThis(String mode){
+  void returnToThis(String? mode){
     if(!widget.connection.isConnected()){
       connectionError();
       return;
@@ -128,7 +128,7 @@ class _ModesPageState extends State<ModesPage> implements ConnectionInterface{
   }
 
   void receiveModes(Map<String, dynamic> message){
-    List<String> modes = List<String>();
+    List<String> modes = List<String>.empty(growable: true);
     for (var item in message['data']) {
       modes.add(item.toString());
     }

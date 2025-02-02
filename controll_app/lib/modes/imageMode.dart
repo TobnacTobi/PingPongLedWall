@@ -1,4 +1,4 @@
-import 'dart:io';
+/*import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -50,7 +50,7 @@ class _ImageModePageState extends State < ImageModePage > implements ConnectionI
             //visible: _image != null,
             visible: true,
             child: SizedBox(width: double.infinity,
-              child: RaisedButton(
+              child: ElevatedButton(
                 onPressed: sendImage,
                 child: Text('Set Image'),
               )), )
@@ -194,4 +194,4 @@ class _ImageModePageState extends State < ImageModePage > implements ConnectionI
     );
   }
 
-}
+}*/

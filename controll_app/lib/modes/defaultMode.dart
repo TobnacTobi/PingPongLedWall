@@ -10,7 +10,7 @@ import '../widgets/page.dart';
 class DefaultModePage extends StatefulWidget {
   final Connection connection;
 
-  DefaultModePage({Key key, @required this.connection})
+  DefaultModePage({Key? key, required this.connection})
       : super(key: key);
 
   @override
@@ -18,8 +18,8 @@ class DefaultModePage extends StatefulWidget {
 }
 
 class _DefaultModePageState extends State<DefaultModePage> implements ConnectionInterface{
-  List<String> received = new List<String>();
-  SharedPreferences prefs;
+  List<String> received = List<String>.empty(growable: true);
+  SharedPreferences? prefs;
 
   @override
   Widget build(BuildContext context) {

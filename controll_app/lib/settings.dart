@@ -15,8 +15,8 @@ class SettingsPage extends StatefulWidget {
   final Connection connection;
 
   SettingsPage({
-    Key key,
-    @required this.connection,
+    Key? key,
+    required this.connection,
   }): super(key: key);
 
   @override
@@ -24,7 +24,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State < SettingsPage > implements ConnectionInterface {
-  SharedPreferences prefs;
+  late SharedPreferences prefs;
   int _brightness = 50;
   int _size = 10;
   int _speed = 10;
@@ -112,7 +112,7 @@ class _SettingsPageState extends State < SettingsPage > implements ConnectionInt
           })
           ],),
           SizedBox(width: double.infinity,
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: sendDisconnect,
               child: Text('Disconnect'),
             )),
@@ -121,7 +121,7 @@ class _SettingsPageState extends State < SettingsPage > implements ConnectionInt
             IconButton(icon: Icon(Icons.timer), onPressed: (){
               setState(() {
                 widget.connection.timerSeconds = 60*30;
-                widget.connection.timer.cancel();
+                widget.connection.timer!.cancel();
                 widget.connection.timerText = 'No timer is set.';
               });
             }),

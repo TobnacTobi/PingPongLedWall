@@ -8,33 +8,32 @@ const int header = 64;
 
 class Connection {
   //WebSocket ws;
-  Socket _socket;
-  ConnectionInterface parent;
-  String defaultAddress = "192.168.178.129";
+  Socket? _socket;
+  late ConnectionInterface parent;
+  String defaultAddress = "192.168.178.48";
   num defaultPort = 8942;
   String separator = "|"; // separates messages from each other
   Map<String, dynamic> message = {"type": "HELLO", "data": "", "comment": ""};
   int connection_number = 0;
 
-  String address;
-  num port;
+  String? address;
+  num? port;
 
   // Variables for timer to turn LEDWALL off
   int timerSeconds = 10;
-  Timer timer;
+  Timer? timer;
   String timerText = 'No timer is set.';
 
-  Future<bool> connect(String address, num port) async {
-    if(address == null || address.length == 0){
+  FutureOr<bool> connect(String address, num? port) async {
+    if(address.length == 0){
       address = defaultAddress;
     }
     if(port == null){
       port = defaultPort;
     }
-    print('connecting');
+    print('trying to connect to socket '+ address + ':' + port.toString() + ' with timeout of 2 seconds');
     try {
       await close();
-
       _socket = await Socket.connect(address, port.toInt(), timeout: Duration(seconds: 2));
       /*_socket.handleError((Object e){
         print("An error occured. Redirecting to Connect-Screen.");
@@ -43,7 +42,7 @@ class Connection {
       
       this.address = address;
       this.port = port;
-      _socket.listen((List<int> event) {
+      _socket!.listen((List<int> event) {
         receiveMessage(utf8.decode(event));
       });
     } catch (e) {
@@ -59,7 +58,7 @@ class Connection {
 
   catchError()async{
     try {
-      await _socket.done;
+      await _socket!.done;
       print('WebSocket closed without error');
     } catch (error) {
       print('connection closed with error: ${error}');
@@ -68,15 +67,15 @@ class Connection {
     }
   }
 
-  Future<bool> close() async {
+  FutureOr<bool> close() async {
     if(!isConnected()){
       return false;
     }
     print("closing...");
     message['type'] = "DISCONNECT";
     sendMessage(message);
-    await _socket.flush();
-    _socket.close();
+    await _socket!.flush();
+    _socket!.close();
     _socket = null;
     return true;
   }
@@ -84,7 +83,7 @@ class Connection {
   bool isConnected(){
     if(_socket != null){
       bool done = false;
-      _socket.done.whenComplete(() => done = true);
+      _socket!.done.whenComplete(() => done = true);
       return !done;
     }
     return false;
@@ -106,7 +105,7 @@ class Connection {
     //print(bdata.buffer.asUint8List());
     //_socket.add(bdata.buffer.asUint8List());
     //_socket.flush().then((value) => (){_socket.add(msg);});
-    _socket.add(msg);
+    _socket!.add(msg);
   }
 
   void sendHello(){
@@ -167,7 +166,7 @@ class Connection {
     sendMessage(message);
   }
 
-  void sendSettings(Map<String, dynamic> settings){
+  FutureOr<void> sendSettings(Map<String, dynamic> settings) async {
     message['type'] = "SETTINGS";
     message['data'] = json.encode(settings);
     sendMessage(message);

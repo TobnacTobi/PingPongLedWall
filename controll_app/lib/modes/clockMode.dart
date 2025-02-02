@@ -14,8 +14,8 @@ class ClockModePage extends StatefulWidget {
   final Connection connection;
 
   ClockModePage({
-    Key key,
-    @required this.connection
+    Key? key,
+    required this.connection
   }): super(key: key);
 
   @override
@@ -25,14 +25,14 @@ class ClockModePage extends StatefulWidget {
 class _ClockModePageState extends State < ClockModePage > implements ConnectionInterface {
   List < String > _colorStyles = < String > ['solid', 'fadeHorizontal', 'fadeVertical', 'rainbow'];
 
-  bool _showTextColor = false;
-  bool _showBackgroundColor = false;
-  String _textStyle = "solid";
-  String _backgroundStyle = "solid";
-  Color _textColor0 = Colors.white;
-  Color _textColor1 = Colors.grey;
-  Color _backgroundColor0 = Colors.black;
-  Color _backgroundColor1 = Colors.grey;
+  bool? _showTextColor = false;
+  bool? _showBackgroundColor = false;
+  String? _textStyle = "solid";
+  String? _backgroundStyle = "solid";
+  Color? _textColor0 = Colors.white;
+  Color? _textColor1 = Colors.grey;
+  Color? _backgroundColor0 = Colors.black;
+  Color? _backgroundColor1 = Colors.grey;
 
 
   @override
@@ -54,7 +54,7 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
               });
             }),
             Text('Clock Color'),
-            Visibility(visible: _showTextColor,
+            Visibility(visible: _showTextColor!,
               child: Row(children: [
                 SizedBox(width: 20),
                 Text('Style: '),
@@ -63,7 +63,7 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
                   DropdownMenuItem(child: Text('fadeHorizontal'), value: 'fadeHorizontal'),
                   DropdownMenuItem(child: Text('fadeVertical'), value: 'fadeVertical'),
                   DropdownMenuItem(child: Text('rainbow'), value: 'rainbow'),
-                ], value: _textStyle, onChanged: (v) {
+                ], value: _textStyle, onChanged: (dynamic v) {
                   setState(() {
                     _textStyle = v;
                   });
@@ -71,18 +71,18 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
               ], ))
           ], ),
           Visibility(
-            visible: _showTextColor && !_textStyle.startsWith('rainbow'),
+            visible: _showTextColor! && !_textStyle!.startsWith('rainbow'),
             child: Row(children: [
               SizedBox(width: 15),
-              RaisedButton(onPressed: (){
+              ElevatedButton(onPressed: (){
                 showDialog(context: context, builder: (_) => getAlertDialog(type: 'text', number: 0));
-              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),), color: _textColor0,),
+              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black, backgroundColor: _textColor0),)),
               SizedBox(width: 30),
               Visibility(
-                visible: _showTextColor && _textStyle.startsWith('fade'),
-                child: RaisedButton(onPressed: (){
+                visible: _showTextColor! && _textStyle!.startsWith('fade'),
+                child: ElevatedButton(onPressed: (){
                 showDialog(context: context, builder: (_) => getAlertDialog(type: 'text', number: 1));
-              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),),color: _textColor1),
+              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black, backgroundColor: _textColor1),)),
               ),
             ], )
           ),
@@ -93,7 +93,7 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
               });
             }),
             Text('Background Color'),
-            Visibility(visible: _showBackgroundColor,
+            Visibility(visible: _showBackgroundColor!,
               child: Row(children: [
                 SizedBox(width: 20),
                 Text('Style: '),
@@ -102,7 +102,7 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
                   DropdownMenuItem(child: Text('fadeHorizontal'), value: 'fadeHorizontal'),
                   DropdownMenuItem(child: Text('fadeVertical'), value: 'fadeVertical'),
                   DropdownMenuItem(child: Text('rainbow'), value: 'rainbow'),
-                ], value: _backgroundStyle, onChanged: (v) {
+                ], value: _backgroundStyle, onChanged: (dynamic v) {
                   setState(() {
                     _backgroundStyle = v;
                   });
@@ -110,25 +110,25 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
               ], ))
           ], ),
           Visibility(
-            visible: _showBackgroundColor && !_backgroundStyle.startsWith('rainbow'),
+            visible: _showBackgroundColor! && !_backgroundStyle!.startsWith('rainbow'),
             child: Row(children: [
               SizedBox(width: 15),
-              RaisedButton(onPressed: (){
+              ElevatedButton(onPressed: (){
                 showDialog(context: context, builder: (_) => getAlertDialog(type: 'background', number: 0));
-              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),),color: _backgroundColor0),
+              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black, backgroundColor: _backgroundColor0),)),
               SizedBox(width: 30),
               Visibility(
-                visible: _showBackgroundColor && _backgroundStyle.startsWith('fade'),
-                child: RaisedButton(onPressed: (){
+                visible: _showBackgroundColor! && _backgroundStyle!.startsWith('fade'),
+                child: ElevatedButton(onPressed: (){
                 showDialog(context: context, builder: (_) => getAlertDialog(type: 'background', number: 1));
-              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black),),color: _backgroundColor1),
+              }, child: Text('ChangeMe', style: TextStyle(color: Colors.black, backgroundColor: _backgroundColor0),)),
               ),
             ], )
           ),
 
           SizedBox(height: 10),
           SizedBox(width: double.infinity,
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: sendColors,
               child: Text('Text setzen'),
             )),
@@ -140,11 +140,11 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
 
   void sendColors() {
     Map < String, dynamic > textsettings = Map<String, dynamic>();
-    if(!_showTextColor){
+    if(!_showTextColor!){
       _textStyle = 'solid';
       _textColor0 = Colors.white;
     }
-    if(!_showBackgroundColor){
+    if(!_showBackgroundColor!){
       _backgroundStyle = 'solid';
       _backgroundColor0 = Colors.black;
     }
@@ -156,16 +156,16 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
   String getTextColor() {
     return json.encode({
       'style': _textStyle,
-      'color0': json.encode({'r': _textColor0.red, 'g': _textColor0.green, 'b': _textColor0.blue, 'a': _textColor0.alpha}),
-      'color1': json.encode({'r': _textColor1.red, 'g': _textColor1.green, 'b': _textColor1.blue, 'a': _textColor1.alpha})
+      'color0': json.encode({'r': _textColor0!.red, 'g': _textColor0!.green, 'b': _textColor0!.blue, 'a': _textColor0!.alpha}),
+      'color1': json.encode({'r': _textColor1!.red, 'g': _textColor1!.green, 'b': _textColor1!.blue, 'a': _textColor1!.alpha})
     });
   }
 
   String getBackgroundColor() {
     return json.encode({
       'style': _backgroundStyle,
-      'color0': json.encode({'r': _backgroundColor0.red, 'g': _backgroundColor0.green, 'b': _backgroundColor0.blue, 'a': _backgroundColor0.alpha}),
-      'color1': json.encode({'r': _backgroundColor1.red, 'g': _backgroundColor1.green, 'b': _backgroundColor1.blue, 'a': _backgroundColor1.alpha})
+      'color0': json.encode({'r': _backgroundColor0!.red, 'g': _backgroundColor0!.green, 'b': _backgroundColor0!.blue, 'a': _backgroundColor0!.alpha}),
+      'color1': json.encode({'r': _backgroundColor1!.red, 'g': _backgroundColor1!.green, 'b': _backgroundColor1!.blue, 'a': _backgroundColor1!.alpha})
     });
   }
 
@@ -190,7 +190,7 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
     String type = 'text',
     int number = 0
   }) {
-    Color currentColor = null;
+    Color? currentColor = null;
     if (type == 'text') {
       if (number == 0) {
         currentColor = _textColor0;
@@ -209,7 +209,7 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
       title: const Text('Pick a color!'),
         content: SingleChildScrollView(
           child: ColorPicker(
-            pickerColor: currentColor,
+            pickerColor: currentColor!,
             onColorChanged: (c) {
               setState(() {
                   if (type == 'text') {
@@ -236,7 +236,7 @@ class _ClockModePageState extends State < ClockModePage > implements ConnectionI
           ),
         ),
         actions: < Widget > [
-          FlatButton(
+          TextButton(
             child: const Text('Set'),
               onPressed: () {
                 setState(() {

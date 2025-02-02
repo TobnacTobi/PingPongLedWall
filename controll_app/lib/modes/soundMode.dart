@@ -1,12 +1,11 @@
-import 'dart:async';
+/*import 'dart:async';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:controll_app/widgets/buttons.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mic_stream/mic_stream.dart';
-import 'package:smart_signal_processing/smart_signal_processing.dart';
+// import 'package:smart_signal_processing/smart_signal_processing.dart';
 
 import '../connection.dart';
 import '../connectionPage.dart';
@@ -339,3 +338,4 @@ int PitchSpecralHPS(List<double> frequencies, int sample_rate){
 }
 
 }
+*/

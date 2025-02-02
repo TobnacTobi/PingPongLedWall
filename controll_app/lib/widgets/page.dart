@@ -6,10 +6,10 @@ import '../settings.dart';
 
 class DefaultPage extends StatelessWidget{
 
-  ConnectionInterface parent;
+  ConnectionInterface? parent;
   String title;
   Widget child;
-  FloatingActionButton fab;
+  FloatingActionButton? fab;
   Connection connection;
   bool showSettings;
   DefaultPage(this.title, this.child, this.connection, [this.fab, this.showSettings = true]);

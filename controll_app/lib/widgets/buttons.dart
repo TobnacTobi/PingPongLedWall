@@ -4,19 +4,18 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:path_drawing/path_drawing.dart';
-import 'package:control_pad/control_pad.dart';
 
 import '../connection.dart';
 
 class ControllerButtons extends StatelessWidget{
 
   // takes String of [up, down, left, right, center]
-  Connection connection;
-  Function up;
-  Function down;
-  Function left;
-  Function right;
-  Function confirm;
+  Connection? connection;
+  Function? up;
+  Function? down;
+  Function? left;
+  Function? right;
+  Function? confirm;
   ControllerButtons({this.connection, this.up, this.down, this.left, this.right, this.confirm});
 
   @override
@@ -84,37 +83,37 @@ class ControllerButtons extends StatelessWidget{
     switch (button) {
       case 'up':
         if(up == null){
-          connection.sendUp();
+          connection!.sendUp();
         }else{
-          up();
+          up!();
         }
         break;
       case 'down':
       if(down == null){
-          connection.sendDown();
+          connection!.sendDown();
         }else{
-          down();
+          down!();
         }
         break;
       case 'left':
       if(left == null){
-          connection.sendLeft();
+          connection!.sendLeft();
         }else{
-          left();
+          left!();
         }
         break;
       case 'right':
       if(right == null){
-          connection.sendRight();
+          connection!.sendRight();
         }else{
-          right();
+          right!();
         }
         break;
       case 'center':
       if(confirm == null){
-          connection.sendConfirm();
+          connection!.sendConfirm();
         }else{
-          confirm();
+          confirm!();
         }
         break;
     }
@@ -122,9 +121,9 @@ class ControllerButtons extends StatelessWidget{
   }
 
   Widget _getClippedImage({
-      _Clipper clipper,
-      String image,
-      void Function() onClick, }) {
+      required _Clipper clipper,
+      String? image,
+      void Function()? onClick, }) {
         clipper.setImageScale(1000, 1000);
         return ClipPath(
           clipper: clipper,
@@ -134,7 +133,7 @@ class ControllerButtons extends StatelessWidget{
 }
 
 class _LongPressButton extends StatelessWidget{
-  final Function _onClick;
+  final Function? _onClick;
   bool isPressed = false;
   Widget child;
   _LongPressButton(this._onClick, this.child);
@@ -145,7 +144,7 @@ class _LongPressButton extends StatelessWidget{
         _longPressStart();
       },
       onLongPressUp: _longPressStop,
-      onTap: _onClick,
+      onTap: _onClick as void Function()?,
       child: child,
     );
   }
@@ -154,7 +153,7 @@ class _LongPressButton extends StatelessWidget{
     isPressed = true;
     new Timer.periodic(Duration(milliseconds: 100), (Timer t) {
       if(isPressed){
-        _onClick();
+        _onClick!();
       }else{
         t.cancel();
       }
@@ -169,16 +168,16 @@ class _LongPressButton extends StatelessWidget{
 class _Clipper extends CustomClipper<Path> {
       _Clipper({this.svgPath, this.offset = Offset.zero, this.imagewidth, this.imageheight});
 
-      String svgPath;
+      String? svgPath;
       Offset offset;
-      double imagewidth;
-      double imageheight;
+      double? imagewidth;
+      double? imageheight;
       @override
       Path getClip(Size size) {
-        var path = parseSvgPathData(svgPath);
+        var path = parseSvgPathData(svgPath!);
         if(imagewidth != null && imageheight != null){
           final Matrix4 matrix4 = Matrix4.identity();
-          matrix4.scale(size.width / imagewidth, size.height / imageheight);
+          matrix4.scale(size.width / imagewidth!, size.height / imageheight!);
           path = path.transform(matrix4.storage);
         }
 

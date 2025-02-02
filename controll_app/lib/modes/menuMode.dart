@@ -10,7 +10,7 @@ import '../widgets/page.dart';
 class MenuModePage extends StatefulWidget {
   final Connection connection;
 
-  MenuModePage({Key key, @required this.connection})
+  MenuModePage({Key? key, required this.connection})
       : super(key: key);
 
   @override
@@ -18,8 +18,8 @@ class MenuModePage extends StatefulWidget {
 }
 
 class _MenuModePageState extends State<MenuModePage> implements ConnectionInterface{
-  List<String> received = new List<String>();
-  SharedPreferences prefs;
+  List<String> received = List<String>.empty(growable: true);
+  SharedPreferences? prefs;
 
   @override
   Widget build(BuildContext context) {

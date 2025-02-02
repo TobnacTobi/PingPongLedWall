@@ -19,8 +19,8 @@ class DrawModePage extends StatefulWidget {
   
 
   DrawModePage({
-    Key key,
-    @required this.connection
+    Key? key,
+    required this.connection
   }): super(key: key);
 
   @override
@@ -28,10 +28,10 @@ class DrawModePage extends StatefulWidget {
 }
 
 class _DrawModePageState extends State < DrawModePage > implements ConnectionInterface {
-  List < String > received = new List < String > ();
-  SharedPreferences prefs;
+  List < String > received = List<String>.empty(growable: true);
+  SharedPreferences? prefs;
   Color _selectedColor = Colors.white;
-  String _selectedAction = 'draw'; // draw, fill
+  String? _selectedAction = 'draw'; // draw, fill
   List < List < LEDPoint >> _points = < List < LEDPoint >> [];
 
   @override
@@ -43,7 +43,7 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
           Builder(builder: (BuildContext context) {
             return GestureDetector(
               onTapDown: (details) {
-                RenderBox object = context.findRenderObject();
+                RenderBox object = context.findRenderObject() as RenderBox;
                 Offset _localPosition = object.globalToLocal(details.globalPosition);
                 int x = (_localPosition.dx / ((MediaQuery.of(context).size.width - 30) / widget.sizex)).floor();
                 int y = (_localPosition.dy / ((MediaQuery.of(context).size.width) / widget.sizex)).floor();
@@ -67,7 +67,7 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
                 });
               },
               onPanUpdate: (details) {
-                RenderBox object = context.findRenderObject();
+                RenderBox object = context.findRenderObject() as RenderBox;
                 Offset _localPosition = object.globalToLocal(details.globalPosition);
                 int x = (_localPosition.dx / ((MediaQuery.of(context).size.width - 30) / widget.sizex)).floor();
                 int y = (_localPosition.dy / ((MediaQuery.of(context).size.width) / widget.sizex)).floor();
@@ -99,14 +99,14 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
           }),
 
           Row(children: [
-            RaisedButton(onPressed: () {
+            ElevatedButton(onPressed: () {
               showDialog(context: context, builder: (_) => getAlertDialog());
-            }, child: Text('Color', style: TextStyle(color: Colors.black), ), color: _selectedColor, ),
+            }, child: Text('Color', style: TextStyle(color: Colors.black, backgroundColor: _selectedColor), )),
             SizedBox(width: 10),
             DropdownButton(items: [
               DropdownMenuItem(child: Row(children: [Icon(Icons.create), Text('Draw')], ), value: 'draw'),
               DropdownMenuItem(child: Row(children: [Icon(Icons.format_color_fill), Text('Fill')], ), value: 'fill'),
-            ], value: _selectedAction, onChanged: (v) {
+            ], value: _selectedAction, onChanged: (dynamic v) {
               setState(() {
                 _selectedAction = v;
               });
@@ -133,15 +133,15 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
     return ButtonTheme(
       minWidth: 50.0,
       height: 30.0,
-      child: FlatButton(
+      child: TextButton(
         onPressed: () {
           setState(() {
             _selectedColor = c;
           });
         },
-        color: c,
         child: SizedBox(width: 10),
-        shape: CircleBorder(side: BorderSide.none),
+        //style: TextStyle(color: c),
+        //shape: CircleBorder(side: BorderSide.none),
       ),
     );
   }
@@ -184,7 +184,7 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ConnectionPage(connection: widget.connection)));
   }
 
-  void fillRecursively(int x, int y, [Color compareto = null]) {
+  void fillRecursively(int x, int y, [Color? compareto = null]) {
     if (x < 0 || y < 0 || x > widget.sizex - 1 || y > widget.sizey - 1 || _points[x][y].color == _selectedColor || (compareto != null && _points[x][y].color != compareto)) {
       return;
     }
@@ -217,7 +217,7 @@ class _DrawModePageState extends State < DrawModePage > implements ConnectionInt
           ),
         ),
         actions: < Widget > [
-          FlatButton(
+          TextButton(
             child: const Text('Set'),
               onPressed: () {
                 setState(() {

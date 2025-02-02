@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
@@ -338,4 +338,4 @@ class _MallocAllocator implements Allocator {
       posixFree(pointer);
     }
   }
-}
+}*/
